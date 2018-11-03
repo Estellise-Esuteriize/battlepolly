@@ -80,9 +80,9 @@ public class Strings{
             case "Heart":
                 return Heart();
             case "Sheild":
-                return Sheild();
-            case "Phone":
                 return Phone();
+            case "Phone":
+                return Sheild();
             case "Magnet":
                 return Magnet();
             case "Sweeper":
@@ -96,7 +96,29 @@ public class Strings{
         }
     }
 
-   
+    public static StringSets GetStringSet(int index) {
+        switch (index) {
+            case 0:
+                return Heart();
+            case 1:
+                return Phone();
+            case 2:
+                return Sheild();
+            case 3:
+                return Magnet();
+            case 4:
+                return Sweeper();
+            case 5:
+                return Bomb();
+            case 6:
+                return GearsOfWar();
+            default:
+                return new StringSets();
+        }
+    }
+
+
+
 }
 
 
