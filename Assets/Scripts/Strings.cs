@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Strings{
+public class Strings {
 
 
     public static StringSets Heart() {
@@ -118,8 +118,33 @@ public class Strings{
     }
 
 
+    public static string Story1 = "In the peaceful land of Upalupa, there lived a happy village...";
+
+    public static string Story2 = "Because of mans carelessness, the water became polluted and became a threat to life...";
+
+    public static string Story3 = "The very island itself and its people were in danger...";
+
+    public static string Sotry4 = "But then suddenly a hero appeared.";
+
+
+    public static string GetStoryString(int story) {
+        switch (story) {
+            case 0:
+                return "In the peaceful land of Upalupa, there lived a happy village...";
+            case 1: 
+                return "Because of mans carelessness, the water became polluted and became a threat to life...";
+            case 2:
+                return "The very island itself and its people were in danger...";
+            case 3:
+                return "But then suddenly a hero appeared."; ;
+            default:
+                return "";
+        }
+    }
 
 }
+
+
 
 
 public struct StringSets {

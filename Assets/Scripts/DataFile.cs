@@ -10,6 +10,12 @@ public class DataFile{
 
     public bool music;
 
+    public bool first_run;
+
+    public int currentLevel;
+
+    public Levels[] level;
+
     public List<Inventory> items;
 
 }
@@ -23,4 +29,11 @@ public struct Inventory {
 
     public int item_price;
 
+}
+
+[System.Serializable]
+public struct Levels{
+    public string levelName;
+    public int levelIndex;
+    public Sprite image;
 }

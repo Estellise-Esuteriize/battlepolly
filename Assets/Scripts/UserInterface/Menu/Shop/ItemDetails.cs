@@ -18,7 +18,7 @@ public class ItemDetails : MonoBehaviour {
 
         data = DataController.instance;
 
-        SetTrash(data.GetTrashCash());
+        SetTrash(data.dataFile.trash_cash);
 
     }
 

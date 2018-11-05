@@ -26,7 +26,7 @@ public class MusicController : MonoBehaviour {
         music = GetComponent<EventTrigger>();
 
 
-        isMusic = data.GetMusic();
+        isMusic = data.dataFile.music;
 
         // disable - enable music base on isMusic value
 

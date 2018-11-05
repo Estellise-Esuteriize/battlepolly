@@ -238,7 +238,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 142999d50fd3dcc4b80ea006254ba5c6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  bullet: {fileID: 1471608090149018, guid: 39f2e3db046ffdf4db556cabed88c87f, type: 2}
   direction: {fileID: 380220562}
   speed: 5
 --- !u!143 &472437881
@@ -362,6 +361,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 1300579416}
+  - component: {fileID: 1300579417}
   m_Layer: 0
   m_Name: BulletFirer
   m_TagString: Untagged
@@ -382,6 +382,17 @@ Transform:
   m_Father: {fileID: 380220562}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1300579417
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1300579415}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 351213a9e3bc6c34b9601bf2a53e8511, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1815128639
 GameObject:
   m_ObjectHideFlags: 0

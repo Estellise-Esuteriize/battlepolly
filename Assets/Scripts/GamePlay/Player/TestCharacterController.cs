@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class TestCharacterController : MonoBehaviour {
 
-    public GameObject bullet;
+    //public GameObject bullet;
     public Transform direction;
 
     public float speed = 5f;
@@ -13,8 +13,8 @@ public class TestCharacterController : MonoBehaviour {
     private CharacterController controller;
 
 
-    private float lastMoveX = 1f;
-    private bool isGameOver;
+    //private float lastMoveX = 1f;
+    private bool isGameOver = false;
 
     void Awake() {
         controller = GetComponent<CharacterController>();
@@ -67,4 +67,15 @@ public class TestCharacterController : MonoBehaviour {
 
     }
 
+    private void OnEnable() {
+        print("parent is Enabled");
+    }
+
+
+    private void OnDisable() {
+        print("parent is Disabled");
+    }
+
+
 }
+

@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class DataController : MonoBehaviour {
 
     public static DataController instance = null;
 
     public float defaultTrashCash = 500f;
+    public int notLevelScene;
+    public Levels[] level;
 
     public bool isDebugging = true;
 
@@ -15,7 +18,18 @@ public class DataController : MonoBehaviour {
     private string path;
     private string file;
 
-    private DataFile dataFile;
+    private DataFile _dataFile;
+    public DataFile dataFile {
+        get { return _dataFile; }
+        set {
+            _dataFile = value;
+
+            string output = JsonUtility.ToJson(_dataFile);
+
+            File.WriteAllText(file, output);
+        }
+
+    }
 
 
     private string[] itemName = new string[] { "Heart", "Phone", "Sheild", "Magnet", "Sweeper", "Bomb", "GearsOfWar" };
@@ -31,7 +45,6 @@ public class DataController : MonoBehaviour {
         DontDestroyOnLoad(gameObject);
 
         Debugging();
-
         InitData();
     }
 
@@ -43,8 +56,6 @@ public class DataController : MonoBehaviour {
 
             if (File.Exists(file)) {
                 File.Delete(file);
-
-
             }
         }
     }
@@ -57,13 +68,16 @@ public class DataController : MonoBehaviour {
         if (File.Exists(file)) {
             string output = File.ReadAllText(file);
 
-            dataFile = JsonUtility.FromJson<DataFile>(output);
+            _dataFile = JsonUtility.FromJson<DataFile>(output);
         }
         else {
 
-            dataFile = new DataFile {
+            _dataFile = new DataFile {
                 trash_cash = defaultTrashCash,
                 music = true,
+                first_run = true,
+                currentLevel = 1,
+                level = level,
                 items = new List<Inventory>()
             };
 
@@ -74,23 +88,36 @@ public class DataController : MonoBehaviour {
                 inventory.item_count = 0;
                 inventory.item_price = itemPrice[i];
             
-                dataFile.items.Add(inventory);
+                _dataFile.items.Add(inventory);
 
             }
 
-            string output = JsonUtility.ToJson(dataFile);
+            string output = JsonUtility.ToJson(_dataFile);
 
             File.WriteAllText(file, output);
         }
     }
 
 
-    public DataFile GetData() {
+    /*public DataFile GetData() {
         return dataFile;
     }
 
     public void SetData(DataFile dataFile) {
         this.dataFile = dataFile;
+    }
+
+    public bool GetFirstRun() {
+        return dataFile.first_run;
+
+    }
+
+    public void WriteFirstRun(bool run) {
+        dataFile.first_run = run;
+
+        string output = JsonUtility.ToJson(dataFile);
+
+        File.WriteAllText(file, output);
     }
 
     public float GetTrashCash() {
@@ -167,6 +194,8 @@ public class DataController : MonoBehaviour {
             }
         }
     }
+
+    */
 
 
 }

@@ -27,7 +27,7 @@ public class ItemInventoryController : MonoBehaviour {
         data = DataController.instance;
         img = GetComponent<Image>();
 
-        Inventory inventory = data.GetOneItemByIndex((int)item);
+        Inventory inventory = data.dataFile.items[(int)item];
 
         if (inventory.item_count > 0) {
             items.text = inventory.item_count.ToString();

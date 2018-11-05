@@ -15,16 +15,16 @@ public class ShopController : MonoBehaviour {
         if (data == null)
             data = DataController.instance;
 
-        float currentTrash = data.GetTrashCash();
+        float currentTrash = data.dataFile.trash_cash;
 
-        Inventory item = data.GetOneItemByIndex(index);
+        Inventory item = data.dataFile.items[index];
 
         if (currentTrash >= item.item_price) {
             item.item_count++;
             currentTrash -= item.item_price;
 
-            data.WriteOneItemByIndex(item, index);
-            data.WriteTrashCash(currentTrash);
+            data.dataFile.items[index] = item;
+            data.dataFile.trash_cash = currentTrash;
 
             inventory[index].AddItem(item.item_count);
             itemDetails.SetTrash(currentTrash);
