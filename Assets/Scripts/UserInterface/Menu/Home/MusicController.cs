@@ -40,8 +40,6 @@ public class MusicController : MonoBehaviour {
 
         isMusic = !isMusic;
 
-        print(isMusic);
-
         if (isMusic) {
             image.sprite = musicOn;
             // enabile music in here

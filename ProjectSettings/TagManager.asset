@@ -13,7 +13,7 @@ TagManager:
   - UI
   - 
   - 
-  - 
+  - Loader
   - 
   - 
   - 
@@ -40,4 +40,16 @@ TagManager:
   m_SortingLayers:
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: Sky
+    uniqueID: 3320994867
+    locked: 0
+  - name: Wall
+    uniqueID: 2728678757
+    locked: 0
+  - name: Ground
+    uniqueID: 2284406895
+    locked: 0
+  - name: Interactable
+    uniqueID: 725854789
     locked: 0

@@ -10,10 +10,12 @@ public class MenuController : MonoBehaviour {
     public MenuEventButton play;
     public MenuEventButton shop;
     public MenuEventButton shopBack;
+    public MenuEventButton levelBack;
 
 
     DataController dataInstance;
     ButtonHelperController buttonHelper;
+    Loader lInstance;
 
     private Transform levelMenu = null;
 
@@ -22,12 +24,16 @@ public class MenuController : MonoBehaviour {
     void Start() {
         buttonHelper = ButtonHelperController.instance;
         dataInstance = DataController.instance;
+        lInstance = Loader.instance;
 
         buttonHelper.PointerUpTriggerEvent(shop.button, Shop);
         buttonHelper.PointerUpTriggerEvent(shopBack.button, BackFromShop);
         buttonHelper.PointerUpTriggerEvent(play.button, Play);
+        buttonHelper.PointerUpTriggerEvent(levelBack.button, LevelBack);
 
         firstRun = dataInstance.dataFile.first_run;
+
+        levelMenu = play.newWindow.transform;
 
         if (firstRun) {
             GameObject obs = Instantiate(storyBoard) as GameObject;
@@ -43,9 +49,10 @@ public class MenuController : MonoBehaviour {
 
             rect.localScale = Vector3.one;
 
-            levelMenu = play.newWindow.transform;
             play.newWindow = obs;
         }
+
+
     }
 
     void Shop(PointerEventData data) {
@@ -61,19 +68,29 @@ public class MenuController : MonoBehaviour {
     void Play(PointerEventData data) {
 
         StoryController story = play.newWindow.GetComponent<StoryController>();
+        firstRun = dataInstance.dataFile.first_run;
 
-        if (story != null) {
+        if (story != null && firstRun) {
             //play.currentWindow.SetActive(false);
             play.newWindow.SetActive(true);
             story.SetTransition(play.currentWindow.transform, levelMenu);
         }
         else {
-            play.currentWindow.SetActive(false);
-            play.newWindow.SetActive(true);
+
+            GameObject[] parms = new GameObject[] { play.currentWindow, levelMenu.gameObject };
+
+            lInstance.ShowBlackScreen(parms);
         }
 
     }
-    
+
+
+    void LevelBack(PointerEventData data) {
+
+        GameObject[] parms = new GameObject[] { levelBack.currentWindow, levelBack.newWindow };
+
+        lInstance.ShowBlackScreen(parms);
+    }
     
 }
 

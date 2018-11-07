@@ -28,7 +28,7 @@ public class LevelController : MonoBehaviour {
         data = DataController.instance;
         bInstance = ButtonHelperController.instance;
 
-        totalLevel = data.dataFile.level.Length;
+        //totalLevel = data.dataFile.level.Length;
 
         currentLevel = data.dataFile.currentLevel;
 

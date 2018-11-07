@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public enum Item {
-    Heart, Phone, Sheild, Magnet, Sweeper, Bomb, GearsOfWar 
+    Heart, Sheild, Phone, Magnet, Sweeper, Bomb, GearsOfWar 
 }
 
 public class ItemInventoryController : MonoBehaviour {

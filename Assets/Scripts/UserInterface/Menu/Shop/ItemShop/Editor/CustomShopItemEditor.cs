@@ -8,7 +8,7 @@ public class CustomShopItemEditor : Editor {
     //private ShopItem[] shopItem;
 
     private ShopItem shopItem;
-    private string[] options = new string[] { "Heart", "Phone", "Sheild", "Magnet", "Sweeper", "Bomb", "GearsOfWar" };
+    private string[] options = new string[] { "Heart", "Sheild", "Phone", "Magnet", "Sweeper", "Bomb", "GearsOfWar" };
     private int index = 0;
     
     public SerializedProperty indexOptions;

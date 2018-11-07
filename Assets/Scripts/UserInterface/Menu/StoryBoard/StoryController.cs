@@ -8,12 +8,16 @@ using UnityEngine.UI;
 public class StoryController : MonoBehaviour {
 
     public GameObject storyWindow;
+    public GameObject characterSelection;
 
     public Image transition;
     public Image imageHolder;
     public StorySet[] stories;
     public Text textHolder;
     public EventTrigger nextStoryButton;
+
+    public EventTrigger maleCharacterButton;
+    public EventTrigger femaleCharacterButton;
 
 
     private int currentPage = 0;
@@ -25,11 +29,15 @@ public class StoryController : MonoBehaviour {
     private bool doneFadeInText = false;
 
     private Transform level;
+    private DataController data;
 
     void Start() {
+        data = DataController.instance;
         bInstance = ButtonHelperController.instance;
 
         bInstance.PointerUpTriggerEvent(nextStoryButton, OnClickNext);
+        bInstance.PointerUpTriggerEvent(maleCharacterButton, SelectMaleCharacter);
+        bInstance.PointerUpTriggerEvent(femaleCharacterButton, SelectFemaleCharacter);
 
         maxPage = stories.Length;
 
@@ -43,9 +51,9 @@ public class StoryController : MonoBehaviour {
         currentPage = 0;
 
         level = lvl;
-        
+
         StartCoroutine("OpenStories", currentWindow);
- 
+
 
     }
 
@@ -55,36 +63,53 @@ public class StoryController : MonoBehaviour {
 
             StartCoroutine("NextPage");
         }
+        else if (isStillTransitioning) {
+            doneFadeInText = true;
+        }
         else {
             if (!isStillTransitioning) {
-                gameObject.SetActive(false);
-                level.gameObject.SetActive(true);
+                StartCoroutine("ShowCharacterSelection");
             }
 
         }
 
     }
 
+    IEnumerator ShowCharacterSelection() {
+
+        DataFile newData = data.dataFile;
+        newData.first_run = false;
+
+        data.dataFile = newData;
+
+        yield return new WaitForSeconds(.3f);
+        storyWindow.SetActive(false);
+        characterSelection.SetActive(true);
+
+    }
+
     IEnumerator NextPage() {
         currentPage++;
 
+        doneFadeInText = false;
         isStillTransitioning = true;
 
         textHolder.text = "";
         imageHolder.sprite = stories[currentPage].image;
-        // done fadeintext;
-        //StopCoroutine("FadeInText");
+
 
         yield return new WaitForSeconds(.3f);
 
-        //doneFadeInText = false;
+
         yield return StartCoroutine("FadeInText");
         isStillTransitioning = false;
     }
 
     IEnumerator OpenStories(Transform currentWindow) {
 
-        yield return StartCoroutine("Transition", currentWindow);
+        GameObject[] parms = new GameObject[] { currentWindow.gameObject, storyWindow };
+
+        yield return StartCoroutine("Transition", parms);
         yield return StartCoroutine("FadeInImage");
 
         yield return StartCoroutine("FadeInText");
@@ -193,11 +218,24 @@ public class StoryController : MonoBehaviour {
 
         }
 
+        if (doneFadeInText) {
+
+            while (letterCount < text.Length) {
+
+                textHolder.text = shownText + text[letterCount];
+
+                shownText += text[letterCount];
+                letterCount++;
+
+            }
+
+        }
+
     }
 
 
 
-    IEnumerator Transition(Transform currentWindow) {
+    IEnumerator Transition(GameObject[] window) {
 
         bool isStillTransitioning = true;
         float isTransitioningTime = 1f;
@@ -228,14 +266,13 @@ public class StoryController : MonoBehaviour {
                 transitionColor.a = 1f;
                 transition.color = transitionColor;
 
-                currentWindow.gameObject.SetActive(false);
-                storyWindow.SetActive(true);
+                window[0].SetActive(false);
+                window[1].SetActive(true);
 
                 isStillTransitioning = false;
             }
             else if (!isStillTransitioning)
                 isTransitioningTime = trans;
-
 
             yield return null;
 
@@ -246,6 +283,32 @@ public class StoryController : MonoBehaviour {
 
         transition.gameObject.SetActive(false);
 
+    }
+    
+
+    void SelectMaleCharacter(PointerEventData data) {
+
+        SelectCharacter(1);
+    }
+
+    void SelectFemaleCharacter(PointerEventData data) {
+
+        SelectCharacter(-1);
+
+    }
+
+
+    void SelectCharacter(int chara) {
+        GameObject[] parms = new GameObject[] { characterSelection, level.gameObject };
+
+        DataFile dta = data.dataFile;
+
+        dta.character = chara;
+        dta.first_run = false;
+
+        data.dataFile = dta;
+
+        StartCoroutine("Transition", parms);
     }
 
 
