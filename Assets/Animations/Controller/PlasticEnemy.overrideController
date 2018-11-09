@@ -1,0 +1,14 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!221 &22100000
+AnimatorOverrideController:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_Name: PlasticEnemy
+  m_Controller: {fileID: 9100000, guid: 2dac40b1c9a339f409f7e0ac0ba3335d, type: 2}
+  m_Clips:
+  - m_OriginalClip: {fileID: 7400000, guid: 26e625d8eba991e44ac331e41be74cad, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: 26e625d8eba991e44ac331e41be74cad, type: 2}
+  - m_OriginalClip: {fileID: 7400000, guid: 2c4673625efef4c44ad4382a7591ae25, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: 7c7c13c537b90f043bdf237757f75a17, type: 2}
