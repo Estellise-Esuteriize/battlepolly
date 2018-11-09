@@ -3,7 +3,11 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - Ground
+  - Enemies
+  - Boss
+  - CharacterStopper
   layers:
   - Default
   - TransparentFX
@@ -14,7 +18,7 @@ TagManager:
   - 
   - 
   - Loader
-  - 
+  - Wall
   - 
   - 
   - 
@@ -51,5 +55,5 @@ TagManager:
     uniqueID: 2284406895
     locked: 0
   - name: Interactable
-    uniqueID: 725854789
+    uniqueID: 1545867901
     locked: 0

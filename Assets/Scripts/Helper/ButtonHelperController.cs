@@ -13,13 +13,7 @@ public class ButtonHelperController : MonoBehaviour {
 
     void Awake() {
 
-
-
-        if (instance == null)
-            instance = this;
-        else if (instance != this) {
-            Destroy(gameObject);
-        }
+        instance = this;
 
         listOfListener = new Dictionary<EventTrigger, EventTrigger.Entry>();
     }

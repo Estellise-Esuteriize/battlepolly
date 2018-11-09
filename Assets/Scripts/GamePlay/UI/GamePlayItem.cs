@@ -41,7 +41,10 @@ public class GamePlayItem : MonoBehaviour {
             textHolder.text = "0";
             image.sprite = defualtImg;
         }
-        
+
+
+        buttonInstance.PointerUpTriggerEvent(clickItem, ClickItem);
+
         //
     }
 

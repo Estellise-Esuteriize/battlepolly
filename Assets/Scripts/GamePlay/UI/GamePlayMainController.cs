@@ -27,7 +27,7 @@ public class GamePlayMainController : MonoBehaviour {
 
     void Start() {
 
-        btnInstance = ButtonHelperController.instance;
+        //btnInstance = ButtonHelperController.instance;
         dataInstance = DataController.instance;
 
         DataFile data = dataInstance.dataFile;
@@ -39,6 +39,7 @@ public class GamePlayMainController : MonoBehaviour {
 
 
     }
+
 
 
 
