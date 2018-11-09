@@ -49,7 +49,7 @@ public class PlayerController : BasePlayer, IEnvironmentData {
         upperSprite = transform.GetChild(0).GetComponent<SpriteRenderer>();
         lowerSprite = transform.GetChild(1).GetComponent<SpriteRenderer>();
 
-        playerHealth = 1;
+        playerHealth = 100;
         
     }
 
@@ -64,8 +64,26 @@ public class PlayerController : BasePlayer, IEnvironmentData {
             MoveHorizontal(ref velocity);
             MoveVertical(ref velocity);
 
-            upperSprite.sortingOrder = Mathf.RoundToInt((rgbody.transform.position.y + .5f) * -10);
-            lowerSprite.sortingOrder = Mathf.RoundToInt((rgbody.transform.position.y + .5f) * -10) - 1;
+            float sortingDir = Mathf.Sign(rgbody.transform.position.y);
+            string sorting = Mathf.Abs(rgbody.transform.position.y).ToString();
+
+            int sortingOrder;
+
+            try {
+                System.Int32.TryParse(sorting[0].ToString() + sorting[2].ToString(), out sortingOrder);
+
+                int sortingOrdered = sortingOrder * ((sortingDir == -1) ? 1 : -1);
+                
+                upperSprite.sortingOrder = sortingOrdered + 1;
+                lowerSprite.sortingOrder = sortingOrdered;
+            }
+            catch (System.IndexOutOfRangeException ex) {
+                ex.ToString();
+
+                upperSprite.sortingOrder = 0 + 1;
+                lowerSprite.sortingOrder = 0;
+
+            }
 
             MovePlayer(velocity);
 
@@ -140,18 +158,17 @@ public class PlayerController : BasePlayer, IEnvironmentData {
     }
 
     protected new void OnTriggerEnter2D(Collider2D collision) {
-        //base.OnTriggerEnter2D(collision);
+        
 
         if (collision.gameObject.CompareTag(characterStopper)) {
-            print("stop character movement");
             bossRoom = true;
         }
         else if (collision.CompareTag(PoolingKey.Enemies.ToString()) || collision.CompareTag(PoolingKey.Enemies.ToString())) {
 
-            int myY = (int)rgbody.transform.position.y;
-            int enemyY = (int)collision.transform.position.y;
+            float myY = rgbody.transform.position.y + -.5f;
+            float enemyY = collision.transform.position.y;
            
-            if (myY == enemyY - 1 || myY == enemyY + 1 || myY == enemyY) {
+            if ((int)myY == (int)enemyY) {
 
                 EnemyController enemy = null;
 

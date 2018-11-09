@@ -108,7 +108,7 @@ public abstract class BasePlayer : MonoBehaviour {
 
     protected virtual void MovePlayer(Vector3 velocity) {
 
-        float movementAnimation = Mathf.Sign(velocity.x + velocity.y);
+        float movementAnimation = Mathf.Abs(velocity.x) + Mathf.Abs(velocity.y);
 
         animator.SetFloat(defualtMovementName, movementAnimation);
 

@@ -117,11 +117,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8064deddece47654ab7481d162697ea3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  playerMask:
+    serializedVersion: 2
+    m_Bits: 1024
   enemy: 0
   enemySpeed: 0
   knockBack: 0
   enemyHealth: 1000
-  hitTest: 0
   useSetBoxCollider: 0
   stopMovementPosition: 0
   deathAnim: {fileID: 7400000, guid: 26e625d8eba991e44ac331e41be74cad, type: 2}

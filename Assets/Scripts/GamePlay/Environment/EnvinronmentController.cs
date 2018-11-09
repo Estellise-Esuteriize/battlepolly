@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -85,15 +86,12 @@ public class EnvinronmentController : MonoBehaviour {
                 position.x = distance - (spriteWidth / 2);
 
                 movementStopper.transform.position = position;
-
-                continue;
-
+                
             }
 
 
 
             BoxCollider2D[] boxes = obs.GetComponentsInChildren<BoxCollider2D>();
-
 
             float minYDirection = Mathf.Sign(boxes[0].transform.position.y);
             float maxYDirection = Mathf.Sign(boxes[1].transform.position.y);
@@ -107,13 +105,14 @@ public class EnvinronmentController : MonoBehaviour {
             float minGroundWidth = distance - groundW;
             float maxGroundWidth = distance + groundW;
 
-            enemySpawn.minX = (Mathf.Abs(boxes[0].transform.position.y) - minYBounds) * minYDirection;
+            enemySpawn.minY = (Mathf.Abs(boxes[0].transform.position.y) - minYBounds) * minYDirection;
             enemySpawn.maxY = (Mathf.Abs(boxes[1].transform.position.y) - maxYBounds) * maxYDirection;
 
             enemySpawn.minX = minGroundWidth;
             enemySpawn.maxX = maxGroundWidth;
 
-            enemySpawn.boss = (i == grounds.Length - 2) ? distance + groundW - 2 : 0;
+            enemySpawn.boss = (i == grounds.Length - 1) ? distance : 0;
+
 
             SpawnEnemy(enemySpawn);
 
@@ -131,6 +130,22 @@ public class EnvinronmentController : MonoBehaviour {
       
         GameObject obs = null;
 
+
+        if (spawn.boss > 0) {
+
+            enemyPosition.x = spawn.boss;
+            enemyPosition.y = 0;
+
+            obs = poolerInstance.GetBoss(1);
+            obs.transform.position = enemyPosition;
+            obs.transform.parent = transform;
+
+
+            obs.SetActive(true);
+
+            return;
+        }
+
         for (int i = 0; i < enemies; i++) {
 
             float xPos = Random.Range(spawn.minX, spawn.maxX);
@@ -146,23 +161,29 @@ public class EnvinronmentController : MonoBehaviour {
 
             SpriteRenderer render = obs.GetComponent<SpriteRenderer>();
 
-            render.sortingOrder = Mathf.RoundToInt((yPos + .5f) * -10);
+            //render.sortingOrder = Mathf.RoundToInt((yPos + .5f) * -10);
+
+            float posYDir = Mathf.Sign(yPos);
+            string sort = Mathf.Abs(yPos).ToString();
+
+            int sortOrder;
+
+            try {
+                System.Int32.TryParse(sort[0].ToString() + sort[2].ToString(), out sortOrder);
+
+            }
+            catch (System.IndexOutOfRangeException ex) {
+                print(ex.StackTrace);
+                sortOrder = 0;
+            }
+
+            render.sortingOrder = sortOrder * ((posYDir == -1) ?  1 :  -1); 
 
             obs.SetActive(true);
 
         }
 
 
-        if (spawn.boss > 0) {
-
-            enemyPosition.x = spawn.boss;
-            enemyPosition.y = 0f;
-
-            obs = poolerInstance.GetBoss(1);
-            obs.transform.position = enemyPosition;
-            obs.transform.parent = transform;
-            obs.SetActive(true);
-        }
 
     }
 

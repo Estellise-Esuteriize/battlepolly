@@ -254,7 +254,7 @@ GameObject:
   - component: {fileID: 212233661}
   - component: {fileID: 212233668}
   - component: {fileID: 212233665}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Player
   m_TagString: Player
   m_Icon: {fileID: 0}
@@ -371,7 +371,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 01a7510504d78cb4ea17db0931e2a93d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 0.5
+  speed: 3
   useDefaultBoxCollider: 1
   boxColliderOffset: {x: 0, y: 0, z: 0}
   boxColliderSize: {x: 0, y: 0, z: 0}
@@ -398,7 +398,7 @@ GameObject:
   m_Component:
   - component: {fileID: 286954362}
   - component: {fileID: 286954363}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Spear
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -531,6 +531,10 @@ Prefab:
       propertyPath: m_RootOrder
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 1603934568381552, guid: 994d0876bcae27749b9eef713faed540, type: 2}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 994d0876bcae27749b9eef713faed540, type: 2}
   m_IsPrefabParent: 0
@@ -549,7 +553,7 @@ GameObject:
   m_Component:
   - component: {fileID: 713209765}
   - component: {fileID: 713209766}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: UpperBody
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -653,7 +657,7 @@ BoxCollider2D:
   m_Enabled: 1
   m_Density: 1
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
@@ -779,7 +783,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1622648797}
   - component: {fileID: 1622648798}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: LowerBody
   m_TagString: Untagged
   m_Icon: {fileID: 0}
