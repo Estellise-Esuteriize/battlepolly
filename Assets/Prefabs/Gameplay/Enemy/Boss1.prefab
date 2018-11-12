@@ -76,7 +76,7 @@ BoxCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: -0.5}
+  m_Offset: {x: 0, y: -1.71}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -87,7 +87,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 7, y: 6}
+  m_Size: {x: 7, y: 3.5}
   m_EdgeRadius: 0
 --- !u!95 &95620657698621954
 Animator:
@@ -123,9 +123,9 @@ MonoBehaviour:
   enemy: 4
   attackBossSprite: {fileID: 21300000, guid: 5face2ce77bac74499916e3df884c4b1, type: 3}
   enemySpeed: 0
-  knockBack: 0
+  knockBack: 50
   stopMovementPosition: 0
-  enemyHealth: 1000
+  enemyHealth: 5
   useSetBoxCollider: 0
   deathAnim: {fileID: 7400000, guid: 26e625d8eba991e44ac331e41be74cad, type: 2}
   defaultSprite: {fileID: 21300000, guid: 0f740d4bd0e850b4bab562980b29114c, type: 3}

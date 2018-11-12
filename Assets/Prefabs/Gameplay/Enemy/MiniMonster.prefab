@@ -117,12 +117,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8064deddece47654ab7481d162697ea3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  playerMask:
+    serializedVersion: 2
+    m_Bits: 0
   enemy: 1
+  attackBossSprite: {fileID: 0}
   enemySpeed: 0.2
   knockBack: 20
-  enemyHealth: 1
-  hitTest: 0
+  knockBackSpeed: 1
   stopMovementPosition: 1.67
+  enemyHealth: 1
+  useSetBoxCollider: 0
   deathAnim: {fileID: 7400000, guid: 26e625d8eba991e44ac331e41be74cad, type: 2}
   defaultSprite: {fileID: 21300000, guid: a13a43d8218c932438509cb1a4f4268c, type: 3}
   enemyAnim: {fileID: 9100000, guid: 2dac40b1c9a339f409f7e0ac0ba3335d, type: 2}

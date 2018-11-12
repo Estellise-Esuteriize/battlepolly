@@ -66,7 +66,7 @@ public class MenuController : MonoBehaviour {
     }
 
     void Play(PointerEventData data) {
-
+        
         StoryController story = play.newWindow.GetComponent<StoryController>();
         firstRun = dataInstance.dataFile.first_run;
 
@@ -81,6 +81,18 @@ public class MenuController : MonoBehaviour {
 
             lInstance.ShowBlackScreen(parms);
         }
+
+
+
+        /* 
+         * Loading Test
+         * -> Code in this section are for testing the loading screen
+         * -> Start
+         * 
+         * lInstance.StartCoroutine("Loading", 0);
+         * 
+         * -> End
+         /**/
 
     }
 

@@ -24,6 +24,7 @@ public class ShopController : MonoBehaviour {
             item.item_count++;
             currentTrash -= item.item_price;
 
+                 
             dta.items[index] = item;
             dta.trash_cash = currentTrash;
 

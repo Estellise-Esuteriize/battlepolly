@@ -16,26 +16,21 @@ public class PoolerController : MonoBehaviour {
     public bool willGrow;
 
     private List<Pool> pool;
-   
+
+
 
     void Awake() {
 
         pool = new List<Pool>();
 
+
         for (int i = 0; i < pooler.Length; i++) {
 
-            for (int x = 0; x < pooler.Length; x++) {
+            for (int z = 0; z < pooler[i].enemyLimit; z++) {
 
-                for (int z = 0; z < pooler[i].enemyLimit; z++) {
-
-                    pool.Add(InstantiateGameObject(pooler[i]));
-
-                }
-
-
+                pool.Add(InstantiateGameObject(pooler[i]));
 
             }
-
 
         }
 
@@ -59,17 +54,18 @@ public class PoolerController : MonoBehaviour {
 
                 List<GameObject> obstacleMonster = new List<GameObject>();
 
-                for (int i = 0; i < pool.Count; i++) {
+                for(int i = 0; i<pool.Count; i++) {
 
                     if (pool[i].key == key && pool[i].enemy == enemy && !pool[i].obs.activeInHierarchy)
                         obstacleMonster.Add(pool[i].obs);
+                    
 
                 }
+                
 
                 int randomMonster = UnityEngine.Random.Range(0, obstacleMonster.Count - 1);
 
                 return obstacleMonster[randomMonster];
-
             }
             else {
 
@@ -83,7 +79,8 @@ public class PoolerController : MonoBehaviour {
             }
 
         }
-        else if (willGrow) {
+
+        if (willGrow) {
 
             for (int i = 0; i < pooler.Length; i++) {
 
@@ -98,9 +95,7 @@ public class PoolerController : MonoBehaviour {
             }
 
         }
-
-
-
+   
         return null;
     }
 

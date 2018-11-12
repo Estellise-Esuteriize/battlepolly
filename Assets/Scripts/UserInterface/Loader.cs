@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class Loader : MonoBehaviour {
@@ -9,7 +10,9 @@ public class Loader : MonoBehaviour {
     public static Loader instance = null;
 
     public Image loaderBlackScreen;
-    
+
+    public Image background;
+    public Image loading;
 
     void Awake() {
 
@@ -74,6 +77,68 @@ public class Loader : MonoBehaviour {
 
 
     }
+
+    IEnumerator Loading(int level) {
+
+        Color color = background.color;
+        color.a = 0f;
+
+        background.color = color;
+        background.gameObject.SetActive(true);
+
+
+        float transition = 0f;
+        float speed = 1f;
+
+        while (transition < .9f) {
+
+            transition += speed * Time.deltaTime;
+            Mathf.Clamp01(transition);
+
+            color.a = transition;
+
+            background.color = color;
+
+            yield return null;
+
+        }
+
+        loading.gameObject.SetActive(true);
+
+        yield return new WaitForSeconds(1f);
+
+        AsyncOperation operation = SceneManager.LoadSceneAsync(level);
+
+        while (!operation.isDone) {
+            
+            yield return new WaitForSeconds(operation.progress / .9f);
+
+        }
+
+        loading.gameObject.SetActive(false);
+
+        transition = 1f;
+
+        while (transition > .1f) {
+
+            transition -= speed * Time.deltaTime;
+
+            Mathf.Clamp01(transition);
+
+            color.a = transition;
+
+            background.color = color;
+
+            yield return null;
+
+        }
+
+        background.gameObject.SetActive(false);
+
+    }
+
+
+
 
 
 }

@@ -26,6 +26,7 @@ public abstract class BasePlayer : MonoBehaviour {
 
     protected Animator animator;
     protected Rigidbody2D rgbody;
+    [SerializeField]
     protected BoxCollider2D boxCollider;
 
 
@@ -36,18 +37,19 @@ public abstract class BasePlayer : MonoBehaviour {
     private RaycastOrigins raycastOrigins;
 
     private float verticalRaySpacing;
-
     private const float skinWidth = 0.015f;
     
     protected DataController dataInstance;
     protected GameController gameInstance;
 
+    [HideInInspector]
+    public bool playerDamageable;
+
+
     protected virtual void Awake() {
 
         animator = GetComponent<Animator>();
         rgbody = GetComponent<Rigidbody2D>();
-        boxCollider = GetComponent<BoxCollider2D>();
-
 
     }
 
@@ -63,8 +65,7 @@ public abstract class BasePlayer : MonoBehaviour {
 
 
         CalculateRaySpacing();
-
-
+        playerDamageable = true;
     }
 
     protected virtual void MovementAnimation(string name, float value) {
@@ -74,7 +75,13 @@ public abstract class BasePlayer : MonoBehaviour {
 
     protected virtual void OnCollisionEnter2D(Collision2D collision) {
 
-        if (collision.gameObject.CompareTag(PoolingKey.Enemies.ToString()) || collision.gameObject.CompareTag(PoolingKey.Boss.ToString())) {
+        if (!playerDamageable)
+            return;
+
+        bool isEnemies = collision.gameObject.CompareTag(PoolingKey.Enemies.ToString());
+        bool isBoss = collision.gameObject.CompareTag(PoolingKey.Boss.ToString());
+
+        if (isEnemies || isBoss) {
             PlayerTakeDamage(defaultGotHitName);
         }
     }

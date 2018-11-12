@@ -68,6 +68,7 @@ public class StoryController : MonoBehaviour {
         }
         else {
             if (!isStillTransitioning) {
+
                 StartCoroutine("ShowCharacterSelection");
             }
 
@@ -288,12 +289,12 @@ public class StoryController : MonoBehaviour {
 
     void SelectMaleCharacter(PointerEventData data) {
 
-        SelectCharacter(1);
+        SelectCharacter(0);
     }
 
     void SelectFemaleCharacter(PointerEventData data) {
 
-        SelectCharacter(-1);
+        SelectCharacter(1);
 
     }
 

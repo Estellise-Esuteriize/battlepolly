@@ -22,11 +22,13 @@ public class LevelController : MonoBehaviour {
 
     private DataController data;
     private ButtonHelperController bInstance;
+    private Loader lInstance;
 
     void Start() {
 
         data = DataController.instance;
         bInstance = ButtonHelperController.instance;
+        lInstance = Loader.instance;
 
         //totalLevel = data.dataFile.level.Length;
 
@@ -99,10 +101,7 @@ public class LevelController : MonoBehaviour {
     void SetLevelButtonOnClick(PointerEventData data, int level) {
         int lvl = this.data.dataFile.level[level].levelIndex;
 
-        // Show Loading
-
-
-        SceneManager.LoadScene(lvl);
+        lInstance.StartCoroutine("Loading", lvl);
     }
 
     

@@ -5,7 +5,6 @@ using UnityEngine;
 public class PlayerController : BasePlayer, IEnvironmentData {
 
     public GamePlayMainController gameplayController;
-
     public RuntimeAnimatorController[] characterAnim;
 
     public LayerMask wall;
@@ -23,9 +22,6 @@ public class PlayerController : BasePlayer, IEnvironmentData {
     public bool gameOver;
 
     private string characterStopper = "CharacterStopper";
-
-    private Dictionary<int, EnemyController> enemies;
-
     private GameplayManager gameManager;
 
     protected override void Awake() {
@@ -43,8 +39,6 @@ public class PlayerController : BasePlayer, IEnvironmentData {
         playerHealth = dataInstance.dataFile.items[(int)Item.Heart].item_count;
 
         gameManager = GameplayManager.instance;
-
-        enemies = new Dictionary<int, EnemyController>();
 
         upperSprite = transform.GetChild(0).GetComponent<SpriteRenderer>();
         lowerSprite = transform.GetChild(1).GetComponent<SpriteRenderer>();
@@ -64,8 +58,8 @@ public class PlayerController : BasePlayer, IEnvironmentData {
             MoveHorizontal(ref velocity);
             MoveVertical(ref velocity);
 
-            float sortingDir = Mathf.Sign(rgbody.transform.position.y);
-            string sorting = Mathf.Abs(rgbody.transform.position.y).ToString();
+            float sortingDir = Mathf.Sign(rgbody.transform.position.y + -.7f);
+            string sorting = Mathf.Abs(rgbody.transform.position.y + -.7f).ToString();
 
             int sortingOrder;
 
@@ -158,34 +152,15 @@ public class PlayerController : BasePlayer, IEnvironmentData {
     }
 
     protected new void OnTriggerEnter2D(Collider2D collision) {
-        
 
-        if (collision.gameObject.CompareTag(characterStopper)) {
+        if (transform.name != "Player" || bossRoom)
+            return;
+
+        bool isStopper = collision.gameObject.CompareTag(characterStopper);
+
+        if (isStopper) {
+       
             bossRoom = true;
-        }
-        else if (collision.CompareTag(PoolingKey.Enemies.ToString()) || collision.CompareTag(PoolingKey.Enemies.ToString())) {
-
-            float myY = rgbody.transform.position.y + -.5f;
-            float enemyY = collision.transform.position.y;
-           
-            if ((int)myY == (int)enemyY) {
-
-                EnemyController enemy = null;
-
-                if (!enemies.ContainsKey(collision.gameObject.GetInstanceID())) {
-
-                    enemy = collision.gameObject.GetComponent<EnemyController>();
-
-                    enemies.Add(collision.gameObject.GetInstanceID(), enemy);
-
-                }
-                else {
-                    enemy = enemies[collision.gameObject.GetInstanceID()];
-                }
-
-                enemy.TakeDamage();
-
-            }
 
         }
 

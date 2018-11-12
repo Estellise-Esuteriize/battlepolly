@@ -46,6 +46,7 @@ public class EnemyController : MonoBehaviour {
     private BoxCollider2D boxCollider;
 
     private Vector3 movement;
+    private Vector3 bossCurrentPosition;
 
     private GameplayManager playInstance;
 
@@ -54,6 +55,10 @@ public class EnemyController : MonoBehaviour {
     private bool takeDamage;
 
     private bool hasRendered;
+
+
+    private RaycastHit2D[] hitBuffer = new RaycastHit2D[5];
+    private List<RaycastHit2D> hitBufferList = new List<RaycastHit2D>(5);
 
     void Awake() {
 
@@ -104,8 +109,10 @@ public class EnemyController : MonoBehaviour {
 
         hasRendered = true;
 
-        StopCoroutine("DetectPlayer");
-        StartCoroutine("DetectPlayer");
+        StopCoroutine("BossAttackPattern");
+        StartCoroutine("BossAttackPattern");
+
+
        
     }
 
@@ -122,12 +129,24 @@ public class EnemyController : MonoBehaviour {
 
 
         StartCoroutine("Movement");
-   
+
+    }
+
+    public void BossTakeDamage() {
+
+        if (takeDamage)
+            return;
+
+        takeDamage = true;
+
+        anim.SetTrigger("Got_Hit");
+
+        StartCoroutine("TakingDamage");
 
     }
 
     IEnumerator TakingDamage() {
-
+        
         enemyHealth--;
 
         Vector3 position = Vector3.right * knockBack * Time.deltaTime;
@@ -183,70 +202,154 @@ public class EnemyController : MonoBehaviour {
     }
 
 
-    IEnumerator DetectPlayer() {
+    IEnumerator BossAttackPattern() {
 
-        RaycastHit2D[] hitBuffer = new RaycastHit2D[5];
-        List<RaycastHit2D> hitBufferList = new List<RaycastHit2D>();
+        hitBuffer = new RaycastHit2D[5];
+        hitBufferList.Clear();
+
+        bossCurrentPosition = transform.position;
+
+        float randomSecWait = Random.Range(2f, 6f);
+
+        yield return new WaitForSeconds(randomSecWait);
+
+        yield return StartCoroutine("BossDetect");
+        yield return StartCoroutine("BossMoveTowardsPlayer");
+
+
+        if (enemyHealth > 0) {
+             StartCoroutine("BossAttackPattern");
+        }
+
+    }
+
+    IEnumerator BossDetect() {
+
+
+        hitBufferList.Clear();
 
         float length = sprite.bounds.size.x;
+        
 
-        print(length);
-
-        while (enemyHealth > 0) {
-           
-
-            yield return new WaitForSeconds(5f);
-
+        while (hitBufferList.Count < 1) {
 
             int count = rgbody.Cast(Vector2.left, contactFilter, hitBuffer, length);
-
-            print("Count : " + count);
-
+            
             hitBufferList.Clear();
 
             for (int i = 0; i < count; i++) {
                 hitBufferList.Add(hitBuffer[i]);
             }
 
-            /*for (int i = 0; i < hitBufferList.Count; i++) {
-                Vector2 normal = hitBufferList[i].normal;
-
-                print(normal);
-                print("Transform " + hitBuffer[i].transform.position);
-                print(hitBufferList[i].distance);
-                
-            }*/
-
-            if (hitBufferList.Count > 0) {
-
-                anim.SetTrigger("Attack");
-
-                float offsetY = (attackBossSprite.bounds.max.y / 1.5f) + .3f;
-               
-                Vector3 newPos = transform.position;
-                newPos.y += offsetY;
-                
-                transform.position = newPos;
-
-                yield return new WaitForSeconds(1f);
-
-
-
-
-
-            }
-
-
-
-
-
 
             yield return null;
         }
 
+      
 
     }
 
+    IEnumerator BossMoveTowardsPlayer() {
+
+        float offsetY = (attackBossSprite.bounds.size.y / 2.9f);
+
+        Vector3 newPos = transform.position;
+        newPos.y += offsetY;
+
+        transform.position = newPos;
+
+        anim.SetTrigger("Attack");
+
+        yield return new WaitForSeconds(.001f);
+        
+        AnimatorClipInfo[] clipInfo = anim.GetCurrentAnimatorClipInfo(0);
+
+        yield return new WaitForSeconds(clipInfo[0].clip.length);
+
+        RaycastHit2D hit = hitBufferList[0];
+
+        /*print(hit.normal + " Normal");
+        print(hit.distance + " Distance");
+        print(hit.normal.magnitude + " Magnitude");
+        print(hit.transform.position.magnitude + " Transform Magnitude");
+        print(hit.transform.position + " Transform Position");*/
+
+        float distance = hit.distance;
+        float originalDistance = distance;
+        float speed = 2f;
+        float additionalHeight = 1.5f;
+
+        Vector3 moveToPosition = hit.transform.position;
+        moveToPosition.x += hit.normal.magnitude;
+
+        Vector3 bossNewPos = Vector3.zero;
+
+        while (distance >   additionalHeight + .1f) {
+
+            bossNewPos = Vector3.MoveTowards(transform.position, moveToPosition, originalDistance * speed * Time.deltaTime);
+            bossNewPos.y = (offsetY + additionalHeight) + moveToPosition.y;
+            transform.position = bossNewPos;
+
+            distance = Vector3.Distance(transform.position, moveToPosition);
+            distance += -offsetY;
+
+
+            yield return null;
+
+        }
+
+        anim.SetTrigger("FallDown");
+
+        yield return new WaitForSeconds(.001f);
+
+        float sortingDir = Mathf.Sign(transform.position.y);
+        string sorting = Mathf.Abs(transform.position.y + 7f).ToString();
+
+        int sortingOrder;
+
+        try {
+            System.Int32.TryParse(sorting[0].ToString() + sorting[2].ToString(), out sortingOrder);
+
+            int sortingOrdered = sortingOrder * ((sortingDir == -1) ? 1 : -1);
+
+            sprite.sortingOrder = sortingOrdered;
+        }
+        catch (System.IndexOutOfRangeException ex) {
+            ex.ToString();
+            
+            sprite.sortingOrder = 0;
+
+        }
+
+        clipInfo = anim.GetCurrentAnimatorClipInfo(0);
+
+        yield return new WaitForSeconds(clipInfo[0].clip.length);
+
+        bossNewPos = transform.position;
+        bossNewPos.y =  moveToPosition.y + additionalHeight;
+        transform.position = bossNewPos;
+
+        moveToPosition = transform.position + (Vector3.right * 2);
+
+        distance = Vector3.Distance(transform.position, moveToPosition);
+        originalDistance = distance;
+
+        while (distance > .1f) {
+
+            bossNewPos = Vector3.MoveTowards(transform.position, moveToPosition, originalDistance * speed * Time.deltaTime);
+            transform.position = bossNewPos;
+
+            distance = Vector3.Distance(transform.position, moveToPosition);
+
+            yield return null;
+        }
+
+        yield return new WaitForSeconds(3f);
     
-  
+        transform.position = bossCurrentPosition;
+        
+    }
+
+
+
 }

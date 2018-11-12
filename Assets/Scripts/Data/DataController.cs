@@ -31,7 +31,7 @@ public class DataController : MonoBehaviour {
     }
 
 
-    private string[] itemName = new string[] { "Heart", "Sheild", "Phone", "Magnet", "Sweeper", "Bomb", "GearsOfWar" };
+    private string[] itemName = new string[] { "Heart", "Phone", "Sheild", "Magnet", "Sweeper", "Bomb", "GearsOfWar" };
     private int[] itemPrice = new int[] { 300, 300, 100, 50, 600, 900, 850 };
 
 
