@@ -4,8 +4,15 @@ using UnityEngine;
 
 public class PlayerController : BasePlayer, IEnvironmentData {
 
-    public GamePlayMainController gameplayController;
     public RuntimeAnimatorController[] characterAnim;
+
+    public PlayerControl moveUp;
+    public PlayerControl moveDown;
+    public PlayerControl attack;
+
+    private GamePlayItem heartItem;
+
+    private Animator joystickAnimator;
 
     public LayerMask wall;
 
@@ -17,38 +24,77 @@ public class PlayerController : BasePlayer, IEnvironmentData {
     private bool bossRoom;
 
     [HideInInspector]
+    public int hitTracker;
+    [HideInInspector]
     public bool inGame;
     [HideInInspector]
     public bool gameOver;
 
     private string characterStopper = "CharacterStopper";
-    private GameplayManager gameManager;
+
+
+    GamePlayMainController playUIController;
+    GameplayManager playController;
+    SoundController sound;
+    GameController instance;
 
     protected override void Awake() {
         base.Awake();
 
         verticalRayCount = 4;
+
+
     }
 
 
-    protected override void Start() {
-        base.Start();
+    protected override IEnumerator Start() {
+        yield return base.Start();
+
+        instance = GameController.instance;
+
+        while (instance == null) {
+            instance = GameController.instance;
+
+            yield return new WaitForSeconds(.1f);
+
+        }
+
+        instance.AddComponentForReference(this);
+
+        dataInstance = instance.dataController;
+        sound = instance.soundController;
+    
+        playController = instance.GetComponentForReference<GameplayManager>();
+        playUIController = instance.GetComponentForReference<GamePlayMainController>();
+
+        while (playController == null || playUIController == null) {
+
+            playController = instance.GetComponentForReference<GameplayManager>();
+            playUIController = instance.GetComponentForReference<GamePlayMainController>();
+
+            yield return new WaitForSeconds(.1f);
+        }
+
 
         animator.runtimeAnimatorController = characterAnim[dataInstance.dataFile.character];
         wallMask = wall;
         playerHealth = dataInstance.dataFile.items[(int)Item.Heart].item_count;
 
-        gameManager = GameplayManager.instance;
 
         upperSprite = transform.GetChild(0).GetComponent<SpriteRenderer>();
         lowerSprite = transform.GetChild(1).GetComponent<SpriteRenderer>();
 
+        joystickAnimator = transform.Find("Controls/Controller/PlayerMovement").GetComponent<Animator>();
+
+        heartItem = transform.Find("Controls/Controller/Inventory/HeartItem").GetComponent<GamePlayItem>();
+
         playerHealth = 100;
-        
+
     }
 
 
     IEnumerator Movement() {
+
 
         while (inGame && !gameOver) {
 
@@ -101,11 +147,13 @@ public class PlayerController : BasePlayer, IEnvironmentData {
 
         while (inGame && !gameOver) {
 
-#if UNITY_ANDROID || UNITY_IOS
-
-#elif UNITY_STANDALONE || UNITY_EDITOR
-
-            if (Input.GetKey(KeyCode.Space)) {
+            /*
+             * Code in the following line are for testing user attack input on mobile
+             * -> start
+             * 
+             * /
+             
+            if (attack.isPressed) {
 
                 animator.SetBool("Attack", true);
 
@@ -113,47 +161,117 @@ public class PlayerController : BasePlayer, IEnvironmentData {
 
                 animator.SetBool("Attack", false);
 
+                attack.isPressed = false;
+            }
+
+            /*
+             * -> end 
+             */
+
+
+            /*
+             * Code in the following lines are for live
+             * -> uncoment lines if building app
+             * -> start
+             */
+
+#if UNITY_ANDROID || UNITY_IOS
+
+            if (attack.isPressed) {
+
+                animator.SetBool("Attack", true);
+
+                yield return null;
+
+                animator.SetBool("Attack", false);
+
+                attack.isPressed = false;
+            
+                sound.PlayAttackSfx();
+                
+            }
+
+
+#elif UNITY_STANDALONE || UNITY_EDITOR
+
+            if (Input.GetKey(KeyCode.Space)) {
+
+                animator.SetBool("Attack", true);
+
+                sound.PlayAttackSfx();
+
+                yield return new WaitForSeconds(.1f);
+
+                animator.SetBool("Attack", false);
 
             }
 
-            yield return null;
 
 #endif
-
+            /*
+             * -> end 
+             */
+            yield return null;
 
         }
         
 
     }
-   
 
     void MoveHorizontal(ref Vector3 velocity) {
+
         if (bossRoom)
             return;
-#if UNITY_ANDROID || UNITY_IOS
+
         velocity.x = 1f;
-#elif UNITY_EDITOR || UNITY_STANDALONE
-        velocity.x = 1f;
-#endif
 
     }
 
     void MoveVertical(ref Vector3 velocity) {
+
+        /*
+         * Code in the following line are for testing
+         * -> start
+         * /
+
+        velocity.y = moveUp.movingPressed + (moveDown.movingPressed * -1f);
+
+        joystickAnimator.SetFloat("Movement", velocity.y);
+
+        /*
+         * -> end
+         */
+
+        /*
+         * Code in the following line are for building
+         * uncomment if building the game
+         * -> start
+         */
+
 #if UNITY_ANDROID || UNITY_IOS
 
-        //detect input detection from user
-
+        velocity.y = moveUp.movingPressed + (moveDown.movingPressed * -1f);
+        
+        joystickAnimator.SetFloat("Movement", velocity.y);
 
 #elif UNITY_EDITOR || UNITY_STANDALONE
 
         velocity.y = Input.GetAxisRaw("Vertical");
 
+        joystickAnimator.SetFloat("Movement", velocity.y);
+
 #endif
+        /*
+         * -> end
+         */
+
     }
+
+
 
     protected new void OnTriggerEnter2D(Collider2D collision) {
 
-        if (transform.name != "Player" || bossRoom)
+        if (bossRoom)
             return;
 
         bool isStopper = collision.gameObject.CompareTag(characterStopper);
@@ -165,8 +283,12 @@ public class PlayerController : BasePlayer, IEnvironmentData {
         }
 
     }
-    
 
+
+    public void StopMovement() {
+        Vector3 m = Vector3.zero;
+        MovePlayer(m);
+    }
 
 
     public void CharacterStartPosition(Vector3 spawn) {
@@ -176,11 +298,49 @@ public class PlayerController : BasePlayer, IEnvironmentData {
     }
 
     protected override void PlayerHealth(int health) {
-        
+
+        /*
+         * Code in the following lines are for live
+         * -> Uncoment this if building app
+         * -> start
+         */
+            DataFile data = dataInstance.dataFile;
+
+            Inventory items = data.items[0];
+
+            playerHealth = items.item_count;
+            playerHealth = (playerHealth <= 0) ? playerHealth : --playerHealth;
+
+            items.item_count = playerHealth;
+
+            data.items[0] = items;
+
+            dataInstance.dataFile = data;
+
+            playUIController.currentHeart.text = playerHealth.ToString();
+
+            heartItem.UsedItem(playerHealth);
+         /*
+          * -> end
+          */
+
+        /*
+         * Code in the following lines are for testing the app
+         * -> comment this if testing
+         * -> start
+         * /
+
+        playerHealth--;
+
+        /*
+         * -> end
+         */
 
         if (playerHealth <= 0) {
 
             gameOver = true;
+
+            animator.SetBool("Attack", false);
 
             float additionalY = deadSprite.bounds.max.y;
 
@@ -190,13 +350,18 @@ public class PlayerController : BasePlayer, IEnvironmentData {
 
             animator.SetBool(defaultDeadName, true);
 
+            upperSprite.sortingOrder = 10000;
+            lowerSprite.sortingOrder = 9999;
+
             StartCoroutine("CharaDead", newPositon);
 
-            //
+            playController.StartCoroutine("GameOver");
+            playUIController.StartCoroutine("GameOver");
 
 
         }
 
+        hitTracker++;
 
         //gameplayController.currentHeart.text = health.ToString();
     }

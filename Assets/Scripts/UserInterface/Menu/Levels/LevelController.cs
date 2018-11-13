@@ -20,18 +20,28 @@ public class LevelController : MonoBehaviour {
     private int currentLevel;
     private int totalLevel;
 
-    private DataController data;
-    private ButtonHelperController bInstance;
-    private Loader lInstance;
 
-    void Start() {
+    DataController data;
+    ButtonHelperController bInstance;
+    Loader lInstance;
+    GameController instance;
 
-        data = DataController.instance;
-        bInstance = ButtonHelperController.instance;
-        lInstance = Loader.instance;
+    IEnumerator Start() {
 
-        //totalLevel = data.dataFile.level.Length;
+        instance = GameController.instance;
 
+        data = instance.dataController;
+        bInstance = instance.buttonHelper;
+
+        lInstance = instance.loader;
+
+        while (lInstance == null) {
+
+            lInstance = instance.loader;
+
+            yield return new WaitForSeconds(.1f);
+        }
+        
         currentLevel = data.dataFile.currentLevel;
 
         for (int z = 0; z < levelHolder.Length; z++) {
@@ -48,13 +58,13 @@ public class LevelController : MonoBehaviour {
     }
 
     public void InitLevelController() {
+
         currentLevelPage = 0;
 
         int level = currentLevel % 9;
 
         int startShowLevel = currentLevel - ((level == 0) ? 9 : level);
         int endShowLevel = currentLevel;
-
 
         LevelHolder lvlholder = levelHolder[currentLevelPage];
         lvlholder.holder.gameObject.SetActive(true);
@@ -83,7 +93,7 @@ public class LevelController : MonoBehaviour {
                 Button btn = lvl.levelButton.GetComponent<Button>();
                 btn.interactable = true;
                 lvl.levelButtonImage.sprite = data.dataFile.level[i].image;
-                bInstance.PointerUpTriggerEventWithParameters(lvl.levelButton, (data) => { SetLevelButtonOnClick((PointerEventData)data, i); });
+                bInstance.PointerUpTriggerEventWithParameters(lvl.levelButton, (data) => { SetLevelButtonOnClick((PointerEventData)data, i - 1); });
                 //bInstance.PointerUpTriggerEvent(lvl.levelButton, SetLevelButtonOnClick);
 
              }

@@ -25,10 +25,29 @@ public class EnvinronmentController : MonoBehaviour {
     private PoolerController poolerInstance;
     private DataController dataInstance;
 
-    public void InitializeGround(GameObject obs) {
+    GameController instance;
+
+    IEnumerator Start() {
+
+        instance = GameController.instance;
+
+        while (instance == null){
+
+            instance = GameController.instance;
+
+            yield return new WaitForSeconds(.1f);
+
+        }
+
+        instance.AddComponentForReference(this);
+
 
         poolerInstance = GameController.instance.pooler;
-        dataInstance = DataController.instance;
+        dataInstance = GameController.instance.dataController;
+
+    }
+
+    public void InitializeGround(GameObject obs) {
 
         envintData = (IEnvironmentData)obs.GetComponent<IEnvironmentData>();
 

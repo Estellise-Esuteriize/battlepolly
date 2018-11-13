@@ -16,13 +16,13 @@ public class PlayerCharacter : MonoBehaviour {
 
     void Start() {
 
-        dataInstance = DataController.instance;
+        dataInstance = GameController.instance.dataController;
 
         upperSprite = transform.GetChild(0).GetComponent<SpriteRenderer>();
-        lowerSprite = transform.GetChild(0).GetComponent<SpriteRenderer>();
+        lowerSprite = transform.GetChild(1).GetComponent<SpriteRenderer>();
 
         chara = dataInstance.dataFile.character;
-
+        
         upperSprite.sprite = upperPartCharacter[chara];
         lowerSprite.sprite = lowerPartCharacter[chara];
         

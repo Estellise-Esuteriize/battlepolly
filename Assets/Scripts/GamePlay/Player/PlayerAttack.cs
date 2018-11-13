@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerAttack : MonoBehaviour {
+
+    public Sprite defaultCharaSprite;
     
     private Dictionary<float, EnemyController> enemies = new Dictionary<float, EnemyController>();
 
@@ -16,11 +18,12 @@ public class PlayerAttack : MonoBehaviour {
         string isEnemies = collision.tag;
 
         if (isEnemies == "Enemies") {
+           
+            float myY = transform.position.y + ((defaultCharaSprite.bounds.max.y / 3) * -1);
 
-            float myY = transform.position.y + -.5f;
             float enemyY = collision.transform.position.y;
-
-            if (myY + .3f >= enemyY && myY + -.3f <= enemyY) {
+            
+            if (myY + .6f >= enemyY && myY + -.6f <= enemyY) {
 
                 EnemyController enemy = null;
 
@@ -39,10 +42,11 @@ public class PlayerAttack : MonoBehaviour {
             }
         }
         else if (isEnemies == "Boss") {
-            float myY = transform.position.y;
-            float enemyY = collision.transform.position.y - 1f;
+            float myY = transform.position.y + ((defaultCharaSprite.bounds.max.y / 3) * -1);
+            float enemyY = collision.transform.position.y - 1.55f;
 
-            if (myY + .5f >= enemyY && myY + -.5f <= enemyY) {
+
+            if (myY + .7f >= enemyY && myY + -.7f <= enemyY) {
 
                 EnemyController enemy = null;
 

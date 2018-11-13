@@ -16,7 +16,7 @@ public class ItemDetails : MonoBehaviour {
 
     void Start() {
 
-        data = DataController.instance;
+        data = GameController.instance.dataController;
 
         SetTrash(data.dataFile.trash_cash);
 

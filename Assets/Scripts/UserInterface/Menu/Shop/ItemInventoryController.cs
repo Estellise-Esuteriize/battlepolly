@@ -24,7 +24,7 @@ public class ItemInventoryController : MonoBehaviour {
 
     void Start() {
 
-        data = DataController.instance;
+        data = GameController.instance.dataController;
         img = GetComponent<Image>();
 
         Inventory inventory = data.dataFile.items[(int)item];

@@ -45,7 +45,6 @@ public abstract class BasePlayer : MonoBehaviour {
     [HideInInspector]
     public bool playerDamageable;
 
-
     protected virtual void Awake() {
 
         animator = GetComponent<Animator>();
@@ -53,19 +52,17 @@ public abstract class BasePlayer : MonoBehaviour {
 
     }
 
-    protected virtual void Start() {
-
-        dataInstance = DataController.instance;
+    protected virtual IEnumerator Start() {
 
         if (!useDefaultBoxCollider) {
             boxCollider.offset = boxColliderOffset;
             boxCollider.size = boxColliderSize;
         }
 
-
-
         CalculateRaySpacing();
         playerDamageable = true;
+
+        yield return null;
     }
 
     protected virtual void MovementAnimation(string name, float value) {
@@ -80,7 +77,7 @@ public abstract class BasePlayer : MonoBehaviour {
 
         bool isEnemies = collision.gameObject.CompareTag(PoolingKey.Enemies.ToString());
         bool isBoss = collision.gameObject.CompareTag(PoolingKey.Boss.ToString());
-
+        
         if (isEnemies || isBoss) {
             PlayerTakeDamage(defaultGotHitName);
         }
@@ -98,6 +95,7 @@ public abstract class BasePlayer : MonoBehaviour {
 
 
     protected virtual void PlayerTakeDamage(string name) {
+
 
         if (playerHealth > 0) {
 

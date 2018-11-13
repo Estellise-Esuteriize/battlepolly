@@ -9,25 +9,27 @@ public class GamePlayItem : MonoBehaviour {
     public Sprite defualtImg;
     public Sprite haveItmImg;
 
-    public EventTrigger clickItem;
     public Text textHolder;
 
 
     public Item item;
-
-
+    
+    private Button clickBtn;
     private Image image;
 
 
-    ButtonHelperController buttonInstance;
     DataController dataInstance;
 
+    GameController instance;
+
     void Start() {
-        buttonInstance = ButtonHelperController.instance;
-        dataInstance = DataController.instance;
 
-        image = clickItem.GetComponent<Image>();
+        instance = GameController.instance;
 
+        dataInstance = instance.dataController;
+
+        clickBtn = transform.GetChild(0).GetComponent<Button>();
+        image = clickBtn.GetComponent<Image>();
 
         DataFile data = dataInstance.dataFile;
 
@@ -40,41 +42,24 @@ public class GamePlayItem : MonoBehaviour {
         else {
             textHolder.text = "0";
             image.sprite = defualtImg;
+            clickBtn.interactable = false;
         }
 
 
-        buttonInstance.PointerUpTriggerEvent(clickItem, ClickItem);
-
-        //
     }
 
+    public void UsedItem(int count) {
 
-    void ClickItem(PointerEventData dta) {
-        DataFile data = dataInstance.dataFile;
-
-        Inventory itm = data.items[(int)item];
-
-        int itemCount = itm.item_count;
-
-        if (itemCount > 0) {
-            itemCount -= 1;
-
-            if (itemCount == 0) {
-                image.sprite = defualtImg;
-            }
-
-            textHolder.text = itemCount.ToString();
-
-            itm.item_count = itemCount;
-         
-            data.items[(int)item] = itm;
-
-            dataInstance.dataFile = data;
-
-            // use item
+        if (count <= 0) {
+            textHolder.text = "0";
+            image.sprite = defualtImg;
+            clickBtn.interactable = false;
+        }
+        else if (count > 0) {
+            textHolder.text = count.ToString();
         }
 
-   
     }
+
 
 }

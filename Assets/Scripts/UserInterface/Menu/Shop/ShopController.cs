@@ -13,7 +13,7 @@ public class ShopController : MonoBehaviour {
     public void BuyItem(int index) {
 
         if (data == null)
-            data = DataController.instance;
+            data = GameController.instance.dataController;
 
         DataFile dta = data.dataFile;
 

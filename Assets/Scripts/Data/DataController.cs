@@ -5,9 +5,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class DataController : MonoBehaviour {
-
-    public static DataController instance = null;
-
+    
     public float defaultTrashCash = 500f;
     public Levels[] level;
 
@@ -37,10 +35,9 @@ public class DataController : MonoBehaviour {
 
     void Awake() {
 
-        instance = this;
-
         Debugging();
         InitData();
+
     }
 
     void Debugging() {

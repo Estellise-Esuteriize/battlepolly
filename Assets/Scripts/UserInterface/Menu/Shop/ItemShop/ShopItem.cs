@@ -16,13 +16,17 @@ public class ShopItem : MonoBehaviour {
     [HideInInspector]
     public int index;
 
+    private ButtonHelperController buttonHelper;
+
     void Start() {
 
         shopController = gameObject.GetComponentInParent<ShopController>();
         // add listener to eventtriggers
 
-        ButtonHelperController.instance.PointerUpTriggerEvent(showDetails, ShowDetails);
-        ButtonHelperController.instance.PointerUpTriggerEvent(buyItem, BuyItems);
+        buttonHelper = GameController.instance.buttonHelper;
+
+        buttonHelper.PointerUpTriggerEvent(showDetails, ShowDetails);
+        buttonHelper.PointerUpTriggerEvent(buyItem, BuyItems);
 
     }
 

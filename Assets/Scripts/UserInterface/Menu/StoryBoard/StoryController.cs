@@ -32,8 +32,8 @@ public class StoryController : MonoBehaviour {
     private DataController data;
 
     void Start() {
-        data = DataController.instance;
-        bInstance = ButtonHelperController.instance;
+        data = GameController.instance.dataController;
+        bInstance = GameController.instance.buttonHelper;
 
         bInstance.PointerUpTriggerEvent(nextStoryButton, OnClickNext);
         bInstance.PointerUpTriggerEvent(maleCharacterButton, SelectMaleCharacter);

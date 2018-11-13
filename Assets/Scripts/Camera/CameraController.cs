@@ -12,6 +12,22 @@ public class CameraController : MonoBehaviour {
     [HideInInspector]
     public bool cameraMovement;
 
+    GameController instance;
+
+    IEnumerator Start() {
+
+        instance = GameController.instance;
+
+        while (instance == null) {
+            instance = GameController.instance;
+
+            yield return new WaitForSeconds(.1f);
+        }
+
+        instance.AddComponentForReference(this);
+
+    }
+
     public void SetTarget(Transform newTarget) {
 
         target = newTarget;

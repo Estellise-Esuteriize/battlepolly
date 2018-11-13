@@ -5,24 +5,20 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 
-public class ButtonHelperController : MonoBehaviour {
-
-    public static ButtonHelperController instance;
-
+public class ButtonHelperController{
+    
     private Dictionary<EventTrigger, EventTrigger.Entry> listOfListener;
-
-    void Awake() {
-
-        instance = this;
-
-        listOfListener = new Dictionary<EventTrigger, EventTrigger.Entry>();
-    }
 
     /*[RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
     static void OnButtonHelperNewScene() {
         instance.listOfListener = new Dictionary<EventTrigger, EventTrigger.Entry>();
 
     }*/
+
+    public void Init() {
+
+        listOfListener = new Dictionary<EventTrigger, EventTrigger.Entry>();
+    }
 
     public void PointerUpTriggerEvent(EventTrigger button, Action<PointerEventData> call) {
 

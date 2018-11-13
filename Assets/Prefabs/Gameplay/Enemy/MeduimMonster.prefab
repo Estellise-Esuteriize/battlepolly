@@ -30,7 +30,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &4393449097186330
 Transform:
   m_ObjectHideFlags: 1
@@ -124,7 +124,6 @@ MonoBehaviour:
   attackBossSprite: {fileID: 0}
   enemySpeed: 0.2
   knockBack: 20
-  knockBackSpeed: 1
   stopMovementPosition: 1.67
   enemyHealth: 2
   useSetBoxCollider: 0

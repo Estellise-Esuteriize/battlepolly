@@ -18,20 +18,26 @@ public class PoolerController : MonoBehaviour {
     private List<Pool> pool;
 
 
+    GameController instance; 
 
     void Awake() {
 
-        pool = new List<Pool>();
+        instance = GameController.instance;
+
+        if (instance == null) {
+
+            pool = new List<Pool>();
 
 
-        for (int i = 0; i < pooler.Length; i++) {
+            for (int i = 0; i < pooler.Length; i++) {
 
-            for (int z = 0; z < pooler[i].enemyLimit; z++) {
+                for (int z = 0; z < pooler[i].enemyLimit; z++) {
 
-                pool.Add(InstantiateGameObject(pooler[i]));
+                    pool.Add(InstantiateGameObject(pooler[i]));
+
+                }
 
             }
-
         }
 
     }
@@ -54,18 +60,21 @@ public class PoolerController : MonoBehaviour {
 
                 List<GameObject> obstacleMonster = new List<GameObject>();
 
-                for(int i = 0; i<pool.Count; i++) {
+                for(int i = 0; i < pool.Count; i++) {
 
                     if (pool[i].key == key && pool[i].enemy == enemy && !pool[i].obs.activeInHierarchy)
                         obstacleMonster.Add(pool[i].obs);
                     
 
                 }
-                
 
-                int randomMonster = UnityEngine.Random.Range(0, obstacleMonster.Count - 1);
+                if (obstacleMonster.Count > 0) {
 
-                return obstacleMonster[randomMonster];
+                    int randomMonster = UnityEngine.Random.Range(0, obstacleMonster.Count - 1);
+
+                    return obstacleMonster[randomMonster];
+                }
+
             }
             else {
 
@@ -82,17 +91,30 @@ public class PoolerController : MonoBehaviour {
 
         if (willGrow) {
 
+            List<Pool> obsect = new List<Pool>();
+
             for (int i = 0; i < pooler.Length; i++) {
 
                 if (pooler[i].enemyKey == key && pooler[i].enemyType == enemy) {
-                    
-                    pool.Add(InstantiateGameObject(pooler[i]));
 
-                    return pool[pool.Count - 1].obs;
+                    Pool obs = InstantiateGameObject(pooler[i]);
+
+                    pool.Add(obs);
+
+                    obsect.Add(obs);
+
+                    //return pool[pool.Count - 1].obs;
 
                 }
 
             }
+
+            int rand = 0;
+
+            if (obsect.Count > 1) 
+                rand = UnityEngine.Random.Range(0, obsect.Count);
+
+            return obsect[rand].obs;
 
         }
    
@@ -118,20 +140,17 @@ public class PoolerController : MonoBehaviour {
 
     public void ResetPooledObjects() {
 
-        for (int i = 0; i < pooler.Length; i++) {
+        for (int i = 0; i < pool.Count; i++) {
 
-            for (int x = 0; x < pooler.Length; i++) {
+            GameObject obs = pool[i].obs;
+            
+            obs.transform.parent = null;
 
-                GameObject obs = pooler[i].enemy;
+            DontDestroyOnLoad(obs);
 
-                obs.transform.parent = null;
+            obs.SetActive(false);
 
-                obs.SetActive(false);
-
-                DontDestroyOnLoad(obs);
-                
-            }
-
+               
         }
     }
 

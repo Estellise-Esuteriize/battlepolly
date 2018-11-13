@@ -7,21 +7,41 @@ using UnityEngine.UI;
 public class Loader : MonoBehaviour {
 
 
-    public static Loader instance = null;
+    //public static Loader instance = null;
 
     public Image loaderBlackScreen;
 
     public Image background;
     public Image loading;
 
-    void Awake() {
+    PoolerController pooler;
+    GameController instance;
 
-        if (instance == null)
-            instance = this;
-        else if (instance != this)
+    /*void Awake() {
+
+         if (instance == null)
+             instance = this;
+         else if (instance != this)
+             Destroy(gameObject);
+
+         DontDestroyOnLoad(gameObject);
+
+     }*/
+
+    void Start() {
+
+        instance = GameController.instance;
+
+        pooler = instance.pooler;
+
+        bool haveInstance = instance.SetLoader(this);
+        
+        if (haveInstance)
             Destroy(gameObject);
+        else
+            DontDestroyOnLoad(gameObject);
 
-        DontDestroyOnLoad(gameObject);
+ 
 
     }
 
@@ -80,6 +100,8 @@ public class Loader : MonoBehaviour {
 
     IEnumerator Loading(int level) {
 
+        pooler.ResetPooledObjects();
+
         Color color = background.color;
         color.a = 0f;
 
@@ -109,9 +131,13 @@ public class Loader : MonoBehaviour {
 
         AsyncOperation operation = SceneManager.LoadSceneAsync(level);
 
+        float currentProgress = 0;
+
         while (!operation.isDone) {
             
-            yield return new WaitForSeconds(operation.progress / .9f);
+            yield return new WaitForSeconds((operation.progress - currentProgress)/ .9f);
+
+            currentProgress = operation.progress;
 
         }
 

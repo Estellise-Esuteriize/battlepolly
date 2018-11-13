@@ -14,13 +14,16 @@ public class MusicController : MonoBehaviour {
 
     private bool isMusic;
 
-    private ButtonHelperController helper;
-    private DataController data;
+    GameController instance;
+    ButtonHelperController helper;
+    DataController data;
+    SoundController sound;
 
     void Start() {
-
-        helper = ButtonHelperController.instance;
-        data = DataController.instance;
+        instance = GameController.instance;
+        helper = instance.buttonHelper;
+        data = instance.dataController;
+        sound = instance.soundController;
 
         image = GetComponent<Image>();
         music = GetComponent<EventTrigger>();
@@ -29,6 +32,13 @@ public class MusicController : MonoBehaviour {
         isMusic = data.dataFile.music;
 
         // disable - enable music base on isMusic value
+
+        if (isMusic)
+            image.sprite = musicOn;
+        else if (!isMusic)
+            image.sprite = musicOff;
+
+        sound.OnOffSFX(isMusic);
 
 
         // add event trigger 
@@ -40,15 +50,19 @@ public class MusicController : MonoBehaviour {
 
         isMusic = !isMusic;
 
-        if (isMusic) {
-            image.sprite = musicOn;
-            // enabile music in here
-        }
-        else {
-            image.sprite = musicOff;
-            // disable music in here
+        DataFile dta = this.data.dataFile;
 
-        }
+        if (isMusic) 
+            image.sprite = musicOn;
+        else 
+            image.sprite = musicOff;
+
+
+        sound.OnOffSFX(isMusic);
+
+        dta.music = isMusic;
+
+        this.data.dataFile = dta;
 
     }
 

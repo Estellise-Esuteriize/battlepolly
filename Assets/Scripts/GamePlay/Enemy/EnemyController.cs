@@ -60,6 +60,8 @@ public class EnemyController : MonoBehaviour {
     private RaycastHit2D[] hitBuffer = new RaycastHit2D[5];
     private List<RaycastHit2D> hitBufferList = new List<RaycastHit2D>(5);
 
+    GameController instance;
+
     void Awake() {
 
         rgbody = GetComponent<Rigidbody2D>();
@@ -69,9 +71,29 @@ public class EnemyController : MonoBehaviour {
 
     }
 
-    void Start() {
+    IEnumerator Start() {
 
-        playInstance = GameplayManager.instance;
+        instance = GameController.instance;
+
+        while (instance == null) {
+
+            instance = GameController.instance;
+
+            yield return new WaitForSeconds(.1f);
+
+        }
+
+        playInstance = instance.GetComponentForReference<GameplayManager>();
+
+        while (playInstance == null) {
+
+            playInstance = instance.GetComponentForReference<GameplayManager>();
+
+            yield return new WaitForSeconds(.1f);
+        }
+
+
+        playInstance.SetEnemies(this);
 
         sprite.sprite = defaultSprite;
         anim.runtimeAnimatorController = enemyAnim;
@@ -81,28 +103,62 @@ public class EnemyController : MonoBehaviour {
             boxCollider.offset = new Vector2(0, 0);
         }
 
-
-        playInstance.SetEnemies(this);
-
         contactFilter.useTriggers = false;
         contactFilter.SetLayerMask(playerMask);
         contactFilter.useLayerMask = true;
     
+    }
+
+    void OnEnable() {
+
+        boxCollider.enabled = true;
+
+        StartCoroutine("OnStart");
+    }
+
+    IEnumerator OnStart() {
+
+        if (instance != null) {
+            playInstance = instance.GetComponentForReference<GameplayManager>();
+
+            while (playInstance == null) {
+
+                playInstance = instance.GetComponentForReference<GameplayManager>();
+
+                yield return new WaitForSeconds(.1f);
+            }
+
+            playInstance.SetEnemies(this);
+        }
 
     }
-    
-    
 
     public void StartEnemy() {
 
-        if (enemy == Enemy.BossMonster)
+        if (!gameObject.activeInHierarchy)
             return;
 
+        if (enemy == Enemy.BossMonster && hasRendered)
+            StartCoroutine("BossAttackPattern");
+        
         StartCoroutine("Movement");
+        
 
     }
 
-    void OnWillRenderObject() {
+    public void PauseEnemy() {
+
+        if (!gameObject.activeInHierarchy)
+            return;
+
+        if (enemy == Enemy.BossMonster)
+            StopCoroutine("BossAttackPattern");
+
+        StopCoroutine("Movement");
+
+    }
+
+    void OnBecameVisible() {
 
         if (enemy != Enemy.BossMonster || hasRendered)
             return;
@@ -111,9 +167,16 @@ public class EnemyController : MonoBehaviour {
 
         StopCoroutine("BossAttackPattern");
         StartCoroutine("BossAttackPattern");
+    }
 
 
-       
+    void OnBecameInvisible() {
+
+        if (enemy != Enemy.BossMonster) {
+            StopAllCoroutines();
+            gameObject.SetActive(false);
+        }
+
     }
 
     public void TakeDamage() {
@@ -160,22 +223,22 @@ public class EnemyController : MonoBehaviour {
 
             anim.SetInteger("Health", enemyHealth);
 
-            StartCoroutine("DamageAction", deathAnim.length);
+            if (gameObject.tag == "Boss")
+                playInstance.StartCoroutine("CompleteGame", transform);
+
+
+            StopCoroutine("BossAttackPattern");
+
+            yield return new WaitForSeconds(deathAnim.length);
+
+            gameObject.SetActive(false);
+
 
         }
 
         yield return new WaitForSeconds(.3f);
 
         takeDamage = false;
-
-    }
-
-
-    IEnumerator DamageAction(float miniSec) {
-
-        yield return new WaitForSeconds(miniSec);
-
-        gameObject.SetActive(false);
 
     }
 
@@ -221,10 +284,10 @@ public class EnemyController : MonoBehaviour {
              StartCoroutine("BossAttackPattern");
         }
 
+
     }
 
     IEnumerator BossDetect() {
-
 
         hitBufferList.Clear();
 
