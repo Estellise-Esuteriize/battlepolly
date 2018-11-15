@@ -130,8 +130,11 @@ public class MenuController : MonoBehaviour {
         string file = path + filename;
 
         if (File.Exists(file)) {
+
             File.Delete(file);
         }
+
+        instance.dataController.InitData();
 
         lInstance.StartCoroutine("Loading", 0);
 

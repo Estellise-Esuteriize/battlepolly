@@ -6,16 +6,14 @@ using UnityEngine;
 public class PlayerAttack : MonoBehaviour {
 
     public Sprite defaultCharaSprite;
-    
-    private Dictionary<float, EnemyController> enemies = new Dictionary<float, EnemyController>();
 
+    private Dictionary<float, EnemyController> enemies = new Dictionary<float, EnemyController>();
 
     private void OnTriggerEnter2D(Collider2D collision) {
 
-        if (transform.name != "Spear")
-            return;
-
         string isEnemies = collision.tag;
+
+        float addWideRange = .9f;
 
         if (isEnemies == "Enemies") {
            
@@ -23,7 +21,7 @@ public class PlayerAttack : MonoBehaviour {
 
             float enemyY = collision.transform.position.y;
             
-            if (myY + .6f >= enemyY && myY + -.6f <= enemyY) {
+            if (myY + addWideRange >= enemyY && myY + -addWideRange <= enemyY) {
 
                 EnemyController enemy = null;
 
@@ -39,6 +37,7 @@ public class PlayerAttack : MonoBehaviour {
                 }
 
                 enemy.TakeDamage();
+
             }
         }
         else if (isEnemies == "Boss") {
@@ -46,7 +45,7 @@ public class PlayerAttack : MonoBehaviour {
             float enemyY = collision.transform.position.y - 1.55f;
 
 
-            if (myY + .7f >= enemyY && myY + -.7f <= enemyY) {
+            if (myY + addWideRange >= enemyY && myY + -addWideRange <= enemyY) {
 
                 EnemyController enemy = null;
 

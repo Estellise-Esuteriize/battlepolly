@@ -6,11 +6,14 @@ public class PlayerController : BasePlayer, IEnvironmentData {
 
     public RuntimeAnimatorController[] characterAnim;
 
-    public PlayerControl moveUp;
-    public PlayerControl moveDown;
-    public PlayerControl attack;
+    public int initialHealth = 10;
 
-    private GamePlayItem heartItem;
+    [HideInInspector]
+    public PlayerControl moveUp;
+    [HideInInspector]
+    public PlayerControl moveDown;
+    [HideInInspector]
+    public PlayerControl attack;
 
     private Animator joystickAnimator;
 
@@ -29,6 +32,10 @@ public class PlayerController : BasePlayer, IEnvironmentData {
     public bool inGame;
     [HideInInspector]
     public bool gameOver;
+    [HideInInspector]
+    public bool pause;
+
+    private bool isAttacking;
 
     private string characterStopper = "CharacterStopper";
 
@@ -86,9 +93,15 @@ public class PlayerController : BasePlayer, IEnvironmentData {
 
         joystickAnimator = transform.Find("Controls/Controller/PlayerMovement").GetComponent<Animator>();
 
-        heartItem = transform.Find("Controls/Controller/Inventory/HeartItem").GetComponent<GamePlayItem>();
+        moveUp = transform.Find("Controls/Controller/PlayerMovement/ArrowUp").GetComponent<PlayerControl>();
+        moveDown = transform.Find("Controls/Controller/PlayerMovement/ArrowDown").GetComponent<PlayerControl>();
+        attack = transform.Find("Controls/Controller/PlayerAttack").GetComponent<PlayerControl>();
 
-        playerHealth = 100;
+        playerHealth = initialHealth;
+
+        inGame = true;
+        pause = false;
+        gameOver = false;
 
     }
 
@@ -96,10 +109,9 @@ public class PlayerController : BasePlayer, IEnvironmentData {
     IEnumerator Movement() {
 
 
-        while (inGame && !gameOver) {
+        while (inGame && !gameOver && !pause) {
 
             Vector3 velocity = Vector3.zero;
-
 
             MoveHorizontal(ref velocity);
             MoveVertical(ref velocity);
@@ -133,6 +145,7 @@ public class PlayerController : BasePlayer, IEnvironmentData {
         if (!inGame && !gameOver) {
             // game complete
 
+            
 
         }
         else if (!inGame && gameOver) {
@@ -145,7 +158,7 @@ public class PlayerController : BasePlayer, IEnvironmentData {
         
 
 
-        while (inGame && !gameOver) {
+        while (inGame && !gameOver && !pause) {
 
             /*
              * Code in the following line are for testing user attack input on mobile
@@ -177,33 +190,45 @@ public class PlayerController : BasePlayer, IEnvironmentData {
 
 #if UNITY_ANDROID || UNITY_IOS
 
-            if (attack.isPressed) {
+            if (attack.isPressed && !isAttacking) {
 
-                animator.SetBool("Attack", true);
+                isAttacking = true;
 
-                yield return null;
+                animator.SetBool("Attack", isAttacking);
 
-                animator.SetBool("Attack", false);
+                yield return new WaitForSeconds(.1f);
+
+                sound.PlayAttackSfx();
+            
+                yield return new WaitForSeconds(.2f);
+
+                isAttacking = false;
+
+                animator.SetBool("Attack", isAttacking);
 
                 attack.isPressed = false;
-            
-                sound.PlayAttackSfx();
                 
             }
 
 
 #elif UNITY_STANDALONE || UNITY_EDITOR
 
-            if (Input.GetKey(KeyCode.Space)) {
+            if (Input.GetKeyUp(KeyCode.Space) && !isAttacking) {
 
-                animator.SetBool("Attack", true);
+                isAttacking = true;
 
-                sound.PlayAttackSfx();
+                animator.SetBool("Attack", isAttacking);
 
                 yield return new WaitForSeconds(.1f);
 
-                animator.SetBool("Attack", false);
+                sound.PlayAttackSfx();
 
+                yield return new WaitForSeconds(.2f);
+
+                isAttacking = false;
+
+                animator.SetBool("Attack", isAttacking);
+               
             }
 
 
@@ -213,6 +238,22 @@ public class PlayerController : BasePlayer, IEnvironmentData {
              */
             yield return null;
 
+        }
+        if (pause) {
+
+            isAttacking = false;
+
+            animator.SetBool("Attack", isAttacking);
+
+
+            pause = false;
+            
+        }
+        else if (!inGame && !gameOver) {
+
+            isAttacking = false;
+
+            animator.SetBool("Attack", isAttacking);
         }
         
 
@@ -251,6 +292,8 @@ public class PlayerController : BasePlayer, IEnvironmentData {
 #if UNITY_ANDROID || UNITY_IOS
 
         velocity.y = moveUp.movingPressed + (moveDown.movingPressed * -1f);
+
+        print(velocity.y);
         
         joystickAnimator.SetFloat("Movement", velocity.y);
 
@@ -304,39 +347,12 @@ public class PlayerController : BasePlayer, IEnvironmentData {
          * -> Uncoment this if building app
          * -> start
          */
-            DataFile data = dataInstance.dataFile;
 
-            Inventory items = data.items[0];
+        hitTracker++;
 
-            playerHealth = items.item_count;
-            playerHealth = (playerHealth <= 0) ? playerHealth : --playerHealth;
-
-            items.item_count = playerHealth;
-
-            data.items[0] = items;
-
-            dataInstance.dataFile = data;
-
-            playUIController.currentHeart.text = playerHealth.ToString();
-
-            heartItem.UsedItem(playerHealth);
-         /*
-          * -> end
-          */
-
-        /*
-         * Code in the following lines are for testing the app
-         * -> comment this if testing
-         * -> start
-         * /
-
-        playerHealth--;
-
-        /*
-         * -> end
-         */
-
-        if (playerHealth <= 0) {
+        playUIController.currentHeart.text = health.ToString();
+            
+        if (health <= 0) {
 
             gameOver = true;
 
@@ -361,7 +377,6 @@ public class PlayerController : BasePlayer, IEnvironmentData {
 
         }
 
-        hitTracker++;
 
         //gameplayController.currentHeart.text = health.ToString();
     }
@@ -374,5 +389,10 @@ public class PlayerController : BasePlayer, IEnvironmentData {
 
     }
 
+
+    public void AddHeart() {
+        playerHealth++;
+        playUIController.currentHeart.text = playerHealth.ToString();
+    }
 }
 

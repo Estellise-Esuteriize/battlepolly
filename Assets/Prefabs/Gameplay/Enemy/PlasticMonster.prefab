@@ -122,10 +122,10 @@ MonoBehaviour:
     m_Bits: 0
   enemy: 3
   attackBossSprite: {fileID: 0}
-  enemySpeed: 0.3
-  knockBack: 20
+  enemySpeed: 0.7
+  knockBack: 70
   stopMovementPosition: 1.67
-  enemyHealth: 2
+  defaultEnemyHealth: 2
   useSetBoxCollider: 0
   deathAnim: {fileID: 7400000, guid: 26e625d8eba991e44ac331e41be74cad, type: 2}
   defaultSprite: {fileID: 21300000, guid: 5a0e4e2b89e03e74887df46e91f948a8, type: 3}

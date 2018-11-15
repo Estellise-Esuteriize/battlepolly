@@ -84,8 +84,7 @@ public class GameplayManager : MonoBehaviour {
  
     IEnumerator PauseGame() {
 
-        playerController.StopCoroutine("Movement");
-        playerController.StopCoroutine("Attack");
+        playerController.pause = true;
         playerController.StopMovement();
         cameraController.cameraMovement = false;
 
@@ -121,8 +120,10 @@ public class GameplayManager : MonoBehaviour {
 
     IEnumerator GameOver() {
 
-        playerController.StopCoroutine("Movement");
-        playerController.StopCoroutine("Attack");
+        //playerController.StopCoroutine("Movement");
+        //playerController.StopCoroutine("Attack");
+        playerController.inGame = false;
+        playerController.gameOver = true;
         cameraController.cameraMovement = false;
 
         if (enemies != null) {
@@ -140,8 +141,8 @@ public class GameplayManager : MonoBehaviour {
 
     IEnumerator CompleteGame(Transform boss) {
 
-        playerController.StopCoroutine("Movement");
-        playerController.StopCoroutine("Attack");
+        playerController.gameOver = false;
+        playerController.inGame = false;
         cameraController.cameraMovement = false;
 
         if (enemies != null) {

@@ -76,18 +76,18 @@ BoxCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: -1.71}
+  m_Offset: {x: 0, y: -1}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 8.5, y: 8.43}
-    newSize: {x: 1.2, y: 1.7}
+    oldSize: {x: 6.5, y: 6.45}
+    newSize: {x: 7.1, y: 21.11}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 7, y: 3.5}
+  m_Size: {x: 4.6, y: 3}
   m_EdgeRadius: 0
 --- !u!95 &95620657698621954
 Animator:
@@ -121,14 +121,14 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 1024
   enemy: 4
-  attackBossSprite: {fileID: 21300000, guid: 5face2ce77bac74499916e3df884c4b1, type: 3}
-  enemySpeed: 0
-  knockBack: 50
+  attackBossSprite: {fileID: 21300000, guid: c15bbbe8011bf0a4cb2197711be50f98, type: 3}
+  enemySpeed: 0.2
+  knockBack: 80
   stopMovementPosition: 0
-  enemyHealth: 5
+  defaultEnemyHealth: 5
   useSetBoxCollider: 0
   deathAnim: {fileID: 7400000, guid: 26e625d8eba991e44ac331e41be74cad, type: 2}
-  defaultSprite: {fileID: 21300000, guid: 0f740d4bd0e850b4bab562980b29114c, type: 3}
+  defaultSprite: {fileID: 21300000, guid: f4114fb373558514ba9ca3fffa50720e, type: 3}
   enemyAnim: {fileID: 9100000, guid: a3dfdcd488a9f384eacc7456e5d88350, type: 2}
 --- !u!212 &212860744506439198
 SpriteRenderer:
@@ -164,12 +164,12 @@ SpriteRenderer:
   m_SortingLayerID: 1545867901
   m_SortingLayer: 4
   m_SortingOrder: 29
-  m_Sprite: {fileID: 21300000, guid: 4a54c8b8377639945bf339183958a915, type: 3}
+  m_Sprite: {fileID: 21300000, guid: f4114fb373558514ba9ca3fffa50720e, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 1.2, y: 1.7}
+  m_Size: {x: 7.1, y: 21.11}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1

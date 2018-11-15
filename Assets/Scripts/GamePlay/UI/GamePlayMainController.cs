@@ -65,7 +65,7 @@ public class GamePlayMainController : MonoBehaviour {
 
         Inventory item = data.items[0];
 
-        currentHeart.text = item.item_count.ToString();
+        currentHeart.text = "10";
         currentTrash.text = data.trash_cash.ToString();
 
         btnInstance.PointerUpTriggerEvent(pause, PauseGame);

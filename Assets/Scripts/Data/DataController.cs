@@ -31,7 +31,7 @@ public class DataController : MonoBehaviour {
 
     private string[] itemName = new string[] { "Heart", "Phone", "Sheild", "Magnet", "Sweeper", "Bomb", "GearsOfWar" };
     private int[] itemPrice = new int[] { 300, 300, 100, 50, 600, 900, 850 };
-
+    private int[] itemCount = new int[] { 10, 2, 2, 0, 0, 0, 0 };
 
     void Awake() {
 
@@ -52,7 +52,7 @@ public class DataController : MonoBehaviour {
         }
     }
 
-    void InitData() {
+    public void InitData() {
         filename = "/DataFile.json";
         path = Application.persistentDataPath;
         file = path + filename;
@@ -78,7 +78,7 @@ public class DataController : MonoBehaviour {
 
                 Inventory inventory;
                 inventory.item_name = itemName[i];
-                inventory.item_count = 0;
+                inventory.item_count = itemCount[i];
                 inventory.item_price = itemPrice[i];
             
                 _dataFile.items.Add(inventory);

@@ -22,8 +22,6 @@ public abstract class BasePlayer : MonoBehaviour {
     protected string defaultDeadName = "Dead";
     protected string defualtMovementName = "Movement";
 
-    protected int playerHealth = 1;
-
     protected Animator animator;
     protected Rigidbody2D rgbody;
     [SerializeField]
@@ -44,6 +42,7 @@ public abstract class BasePlayer : MonoBehaviour {
 
     [HideInInspector]
     public bool playerDamageable;
+    protected int playerHealth = 1;
 
     protected virtual void Awake() {
 
@@ -95,6 +94,8 @@ public abstract class BasePlayer : MonoBehaviour {
 
 
     protected virtual void PlayerTakeDamage(string name) {
+
+        
 
 
         if (playerHealth > 0) {

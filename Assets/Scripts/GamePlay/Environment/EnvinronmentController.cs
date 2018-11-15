@@ -5,9 +5,7 @@ using UnityEngine;
 
 public class EnvinronmentController : MonoBehaviour {
 
-   
-    public GameObject groundHolder;
-
+ 
     public Sprite[] grounds;
 
     public BoxCollider2D movementStopper;

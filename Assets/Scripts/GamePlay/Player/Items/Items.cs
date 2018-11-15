@@ -10,6 +10,9 @@ public class Items : MonoBehaviour{
     
     private bool useSheild;
 
+    private PlayerControl heart;
+    private GamePlayItem heartItem;
+
     private PlayerControl shield;
     private GamePlayItem shieldItem;
 
@@ -24,6 +27,7 @@ public class Items : MonoBehaviour{
     GameController instance;
     DataController data;
 
+
     IEnumerator Start() {
         
         instance = GameController.instance;
@@ -36,30 +40,34 @@ public class Items : MonoBehaviour{
 
         while (mobile == null) {
 
-            print("WWW");
-
             mobile = instance.GetComponentForReference<MobilePhone>();
 
             yield return new WaitForSeconds(.1f);
 
         }
-        
-        shield = transform.root.Find("Controls/Controller/Inventory/SheildItem/ClickItem").GetComponent<PlayerControl>();
-        shieldItem = shield.GetComponentInParent<GamePlayItem>();
 
-        items[2] = shieldItem;
+
+        heart = transform.root.Find("Controls/Controller/Inventory/HeartItem/ClickItem").GetComponent<PlayerControl>();
+        heartItem = heart.GetComponentInParent<GamePlayItem>();
+
+        items[0] = heartItem;
 
         mobilePhone = transform.root.Find("Controls/Controller/Inventory/PhoneItem/ClickItem").GetComponent<PlayerControl>();
         mobilePhoneItem = mobilePhone.GetComponentInParent<GamePlayItem>();
 
         items[1] = mobilePhoneItem;
 
+        shield = transform.root.Find("Controls/Controller/Inventory/SheildItem/ClickItem").GetComponent<PlayerControl>();
+        shieldItem = shield.GetComponentInParent<GamePlayItem>();
+
+        items[2] = shieldItem;
+
         useSheild = false;
     }
 
     void Update() {
 
-        if (shield.isPressed) {
+        if (shield != null && shield.isPressed) {
 
             StartCoroutine("UsingShield");
 
@@ -67,7 +75,7 @@ public class Items : MonoBehaviour{
 
         }
 
-        if (mobilePhone.isPressed) {
+        if (mobilePhone != null && mobilePhone.isPressed) {
 
             if (mobile == null)
                 return;
@@ -83,6 +91,17 @@ public class Items : MonoBehaviour{
             }
 
             mobilePhone.isPressed = false;
+        }
+
+        if (heart != null && heart.isPressed) {
+
+            bool canAdd = UseItem(0);
+
+            if (canAdd) {
+                playerController.AddHeart();
+            }
+
+            heart.isPressed = false;
         }
 
     }

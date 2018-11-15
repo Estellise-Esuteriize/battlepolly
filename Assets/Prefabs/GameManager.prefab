@@ -198,7 +198,7 @@ MonoBehaviour:
   level:
   - levelName: Level1
     levelIndex: 1
-    image: {fileID: 21300000, guid: 7791d316757e61449846e1def17fafe5, type: 3}
+    image: {fileID: 21300000, guid: 3715582797bd8d349a0f9ee2e3762835, type: 3}
   isDebugging: 0
 --- !u!114 &114965363359052784
 MonoBehaviour:
@@ -214,4 +214,5 @@ MonoBehaviour:
   pooler: {fileID: 0}
   dataController: {fileID: 0}
   soundController: {fileID: 0}
+  loader: {fileID: 0}
   playController: {fileID: 0}

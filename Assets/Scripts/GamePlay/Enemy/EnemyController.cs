@@ -25,7 +25,7 @@ public class EnemyController : MonoBehaviour {
     [Range(0, 5)]
     public float stopMovementPosition;
 
-    public int enemyHealth;
+    public int defaultEnemyHealth;
 
     public bool useSetBoxCollider;
     
@@ -56,6 +56,7 @@ public class EnemyController : MonoBehaviour {
 
     private bool hasRendered;
 
+    private int enemyHealth;
 
     private RaycastHit2D[] hitBuffer = new RaycastHit2D[5];
     private List<RaycastHit2D> hitBufferList = new List<RaycastHit2D>(5);
@@ -113,6 +114,10 @@ public class EnemyController : MonoBehaviour {
 
         boxCollider.enabled = true;
 
+        enemyHealth = defaultEnemyHealth;
+
+        takeDamage = false;
+
         StartCoroutine("OnStart");
     }
 
@@ -135,14 +140,22 @@ public class EnemyController : MonoBehaviour {
 
     public void StartEnemy() {
 
-        if (!gameObject.activeInHierarchy)
+        if (!gameObject.activeInHierarchy || enemy == Enemy.Obstacle)
             return;
 
-        if (enemy == Enemy.BossMonster && hasRendered)
+        if (enemy == Enemy.BossMonster || hasRendered) {
+            StopCoroutine("BossAttackPattern");
+            StopCoroutine("BossMovement");
+            StopCoroutine("BossDetect");
+            StopCoroutine("BossMoveTowardsPlayer");
+            //
             StartCoroutine("BossAttackPattern");
+        }
+        else if(enemy != Enemy.BossMonster){
+            StartCoroutine("Movement");
+        }
         
-        StartCoroutine("Movement");
-        
+
 
     }
 
@@ -151,30 +164,42 @@ public class EnemyController : MonoBehaviour {
         if (!gameObject.activeInHierarchy)
             return;
 
-        if (enemy == Enemy.BossMonster)
+        if (enemy == Enemy.BossMonster) {
             StopCoroutine("BossAttackPattern");
-
-        StopCoroutine("Movement");
+            StopCoroutine("BossMovement");
+            StopCoroutine("BossDetect");
+            StopCoroutine("BossMoveTowardsPlayer");
+        }
+        else 
+            StopCoroutine("Movement");
 
     }
 
-    void OnBecameVisible() {
+    IEnumerator OnBecameVisible() {
 
-        if (enemy != Enemy.BossMonster || hasRendered)
-            return;
-
+        if (enemy != Enemy.BossMonster || hasRendered) 
+            yield break;
+        
         hasRendered = true;
 
         StopCoroutine("BossAttackPattern");
+        StopCoroutine("BossMovement");
+        StopCoroutine("BossDetect");
+        StopCoroutine("BossMoveTowardsPlayer");
+        yield return new WaitForSeconds(1f);
         StartCoroutine("BossAttackPattern");
+        
     }
 
 
     void OnBecameInvisible() {
 
         if (enemy != Enemy.BossMonster) {
-            StopAllCoroutines();
             gameObject.SetActive(false);
+        }
+        else if (hasRendered) {
+            StopAllCoroutines();
+            hasRendered = false;
         }
 
     }
@@ -212,10 +237,12 @@ public class EnemyController : MonoBehaviour {
         
         enemyHealth--;
 
-        Vector3 position = Vector3.right * knockBack * Time.deltaTime;
+        Vector3 position = Vector3.right;
+        position.x *= knockBack;
 
-        rgbody.MovePosition(rgbody.transform.position + position);
+        position *= Time.deltaTime;
 
+        transform.position = transform.position + position;
 
         if (enemyHealth <= 0) {
 
@@ -226,8 +253,10 @@ public class EnemyController : MonoBehaviour {
             if (gameObject.tag == "Boss")
                 playInstance.StartCoroutine("CompleteGame", transform);
 
+            bossCurrentPosition = transform.position;
 
             StopCoroutine("BossAttackPattern");
+            StopCoroutine("BossMoveTowardsPlayer");
 
             yield return new WaitForSeconds(deathAnim.length);
 
@@ -244,7 +273,7 @@ public class EnemyController : MonoBehaviour {
 
 
     IEnumerator Movement() {
-
+       
         yield return new WaitForSeconds(.5f);
 
         float xPosition = transform.position.x;
@@ -269,10 +298,10 @@ public class EnemyController : MonoBehaviour {
 
         hitBuffer = new RaycastHit2D[5];
         hitBufferList.Clear();
-
-        bossCurrentPosition = transform.position;
-
+        
         float randomSecWait = Random.Range(2f, 6f);
+
+        StartCoroutine("BossMovement");
 
         yield return new WaitForSeconds(randomSecWait);
 
@@ -284,36 +313,81 @@ public class EnemyController : MonoBehaviour {
              StartCoroutine("BossAttackPattern");
         }
 
-
     }
+
+    IEnumerator BossMovement() {
+
+        bool isMoving = true;
+
+        float maxY = 1.07f;
+        float minY = -1.25f;
+
+        float minDistance = .0001f;
+
+        float moveToY = Random.Range(minY, maxY);
+
+        Vector3 lastPosition = transform.position;
+
+        while (isMoving) {
+
+            Vector3 toWards = transform.position;
+            toWards.y = moveToY;
+
+            Vector3 movement = Vector3.MoveTowards(transform.position, toWards, enemySpeed * Time.deltaTime);
+            
+            transform.position = movement;
+
+            float distance = Vector3.Distance(toWards, transform.position);
+
+
+            if (distance < minDistance) 
+                isMoving = false;
+
+            
+
+            yield return null;
+
+        }
+       
+        StartCoroutine("BossMovement");
+    }
+
 
     IEnumerator BossDetect() {
 
         hitBufferList.Clear();
 
-        float length = sprite.bounds.size.x;
-        
+        float length = sprite.bounds.size.x + 2f;
 
-        while (hitBufferList.Count < 1) {
+        bool isDetecting = true;
+
+        while (isDetecting) {
 
             int count = rgbody.Cast(Vector2.left, contactFilter, hitBuffer, length);
             
             hitBufferList.Clear();
 
-            for (int i = 0; i < count; i++) {
-                hitBufferList.Add(hitBuffer[i]);
-            }
+            if (count > 0) {
 
+
+                isDetecting = false;
+
+                for (int i = 0; i < count; i++) {
+                    hitBufferList.Add(hitBuffer[i]);
+                }
+            }
 
             yield return null;
         }
 
-      
+        StopCoroutine("BossMovement");
+
+        bossCurrentPosition = transform.position;
 
     }
 
     IEnumerator BossMoveTowardsPlayer() {
-
+        
         float offsetY = (attackBossSprite.bounds.size.y / 2.9f);
 
         Vector3 newPos = transform.position;
@@ -323,19 +397,13 @@ public class EnemyController : MonoBehaviour {
 
         anim.SetTrigger("Attack");
 
-        yield return new WaitForSeconds(.001f);
+        yield return new WaitForSeconds(.01f);
         
         AnimatorClipInfo[] clipInfo = anim.GetCurrentAnimatorClipInfo(0);
 
         yield return new WaitForSeconds(clipInfo[0].clip.length);
 
         RaycastHit2D hit = hitBufferList[0];
-
-        /*print(hit.normal + " Normal");
-        print(hit.distance + " Distance");
-        print(hit.normal.magnitude + " Magnitude");
-        print(hit.transform.position.magnitude + " Transform Magnitude");
-        print(hit.transform.position + " Transform Position");*/
 
         float distance = hit.distance;
         float originalDistance = distance;
@@ -344,29 +412,10 @@ public class EnemyController : MonoBehaviour {
 
         Vector3 moveToPosition = hit.transform.position;
         moveToPosition.x += hit.normal.magnitude;
+        moveToPosition.y += -defaultSprite.bounds.size.y / 8f;
 
-        Vector3 bossNewPos = Vector3.zero;
-
-        while (distance >   additionalHeight + .1f) {
-
-            bossNewPos = Vector3.MoveTowards(transform.position, moveToPosition, originalDistance * speed * Time.deltaTime);
-            bossNewPos.y = (offsetY + additionalHeight) + moveToPosition.y;
-            transform.position = bossNewPos;
-
-            distance = Vector3.Distance(transform.position, moveToPosition);
-            distance += -offsetY;
-
-
-            yield return null;
-
-        }
-
-        anim.SetTrigger("FallDown");
-
-        yield return new WaitForSeconds(.001f);
-
-        float sortingDir = Mathf.Sign(transform.position.y);
-        string sorting = Mathf.Abs(transform.position.y + 7f).ToString();
+        float sortingDir = Mathf.Sign(moveToPosition.y);
+        string sorting = Mathf.Abs(moveToPosition.y).ToString();
 
         int sortingOrder;
 
@@ -375,21 +424,40 @@ public class EnemyController : MonoBehaviour {
 
             int sortingOrdered = sortingOrder * ((sortingDir == -1) ? 1 : -1);
 
-            sprite.sortingOrder = sortingOrdered;
+            sprite.sortingOrder = sortingOrdered + 1;
         }
         catch (System.IndexOutOfRangeException ex) {
             ex.ToString();
-            
-            sprite.sortingOrder = 0;
+            sprite.sortingOrder = 0 + 1;
+        }
+
+
+        Vector3 bossNewPos = Vector3.zero;
+
+        while (distance > additionalHeight + .1f) {
+
+            bossNewPos = Vector3.MoveTowards(transform.position, moveToPosition, originalDistance * speed * Time.deltaTime);
+            bossNewPos.y = (offsetY + additionalHeight) + moveToPosition.y;
+            transform.position = bossNewPos;
+
+            distance = Vector3.Distance(transform.position, moveToPosition);
+            distance += -offsetY;
+
+            yield return null;
 
         }
 
+        anim.SetTrigger("FallDown");
+
+        yield return new WaitForSeconds(.01f);
+
         clipInfo = anim.GetCurrentAnimatorClipInfo(0);
 
-        yield return new WaitForSeconds(clipInfo[0].clip.length);
+        yield return new WaitForSeconds(clipInfo[0].clip.length - 0.02f);
 
         bossNewPos = transform.position;
         bossNewPos.y =  moveToPosition.y + additionalHeight;
+
         transform.position = bossNewPos;
 
         moveToPosition = transform.position + (Vector3.right * 2);
@@ -407,12 +475,12 @@ public class EnemyController : MonoBehaviour {
             yield return null;
         }
 
-        yield return new WaitForSeconds(3f);
+        yield return new WaitForSeconds(2.5f);
     
         transform.position = bossCurrentPosition;
         
     }
-
+   
 
 
 }

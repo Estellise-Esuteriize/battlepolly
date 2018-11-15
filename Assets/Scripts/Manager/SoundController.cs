@@ -21,6 +21,8 @@ public class SoundController : MonoBehaviour {
 
     public void PlayAttackSfx() {
 
+        sfx.Stop();
+
         if (music && !sfx.isPlaying) {
 
             sfx.clip = playerHit;
