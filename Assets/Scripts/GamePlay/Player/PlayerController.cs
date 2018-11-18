@@ -292,8 +292,6 @@ public class PlayerController : BasePlayer, IEnvironmentData {
 #if UNITY_ANDROID || UNITY_IOS
 
         velocity.y = moveUp.movingPressed + (moveDown.movingPressed * -1f);
-
-        print(velocity.y);
         
         joystickAnimator.SetFloat("Movement", velocity.y);
 

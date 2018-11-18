@@ -107,7 +107,7 @@ public class EnemyController : MonoBehaviour {
         contactFilter.useTriggers = false;
         contactFilter.SetLayerMask(playerMask);
         contactFilter.useLayerMask = true;
-    
+        
     }
 
     void OnEnable() {
@@ -268,6 +268,11 @@ public class EnemyController : MonoBehaviour {
         yield return new WaitForSeconds(.3f);
 
         takeDamage = false;
+
+        if (enemy == Enemy.BossMonster) {
+            StopCoroutine("MoveBackwards");
+            StartCoroutine("MoveBackwards");
+        }
 
     }
 
@@ -475,10 +480,35 @@ public class EnemyController : MonoBehaviour {
             yield return null;
         }
 
-        yield return new WaitForSeconds(2.5f);
-    
-        transform.position = bossCurrentPosition;
-        
+        yield return new WaitForSeconds(3f);
+
+        //transform.position = bossCurrentPosition;
+        StopCoroutine("MoveBackwards");
+        StartCoroutine("MoveBackwards");
+
+    }
+
+    IEnumerator MoveBackwards() {
+
+
+        float minDistance = 0.003f;
+
+        float distance = Vector3.Distance(transform.position, bossCurrentPosition);
+
+        float additionalSpeed = 2f;
+
+        while (distance > minDistance) {
+
+            Vector3 moveBack = Vector3.MoveTowards(transform.position, bossCurrentPosition, (enemySpeed + additionalSpeed) * Time.deltaTime);
+
+            transform.position = moveBack;
+
+            distance = Vector3.Distance(transform.position, bossCurrentPosition);
+
+            yield return null;
+
+        }
+
     }
    
 

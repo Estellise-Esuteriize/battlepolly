@@ -147,7 +147,7 @@ public class GamePlayMainController : MonoBehaviour {
     IEnumerator ShowFairy(Vector3 fairyPosition) {
 
         Vector3 newPosition = fairyPosition;
-        newPosition.y -= fairy.sprite.bounds.max.y;
+        newPosition.y -= fairy.sprite.bounds.max.y / 2;
 
         fairy.gameObject.transform.position = newPosition;
 
