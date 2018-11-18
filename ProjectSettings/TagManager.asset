@@ -3,7 +3,12 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - Ground
+  - Enemies
+  - Boss
+  - CharacterStopper
+  - PlayerSpear
   layers:
   - Default
   - TransparentFX
@@ -13,9 +18,9 @@ TagManager:
   - UI
   - 
   - 
-  - 
-  - 
-  - 
+  - Loader
+  - Wall
+  - Player
   - 
   - 
   - 
@@ -40,4 +45,16 @@ TagManager:
   m_SortingLayers:
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: Sky
+    uniqueID: 3320994867
+    locked: 0
+  - name: Wall
+    uniqueID: 2728678757
+    locked: 0
+  - name: Ground
+    uniqueID: 2284406895
+    locked: 0
+  - name: Interactable
+    uniqueID: 1545867901
     locked: 0
